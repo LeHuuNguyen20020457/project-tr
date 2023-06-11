@@ -167,19 +167,19 @@ const TableStyles = styled.div`
 `;
 
 type IPropsTable<T> = {
+    EmployeeList: T[];
     disabled: number;
     setDisabled: React.Dispatch<React.SetStateAction<number>>;
     checkedList: number[];
     setCheckedList: React.Dispatch<React.SetStateAction<number[]>>;
-    EmployeeList: T[];
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 function Table<T extends IDataEmployee>({
     EmployeeList,
     disabled,
+    setDisabled,
     checkedList,
     setCheckedList,
-    setDisabled,
 }: IPropsTable<T> & { children?: React.ReactNode }): React.ReactElement {
     const [toggleIconCheck, setToggleIconCheck] = React.useState<number>(0);
 

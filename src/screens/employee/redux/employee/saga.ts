@@ -1,9 +1,9 @@
 import { takeLatest } from 'redux-saga/effects';
-import { handleSetEmployees, handleDeleteMultipleEmployees } from './handlers';
-import { deleteMultipleEmployees, getEmployeeList } from './employeeSlice';
+import { handleSetEmployees, handleDeleteMultipleEmployees, handlePagination } from './handlers';
+import { deleteMultipleEmployees, getEmployeeList, pagination } from './employeeSlice';
 
 export default function* setEmployeeSaga() {
-    console.log(2);
     yield takeLatest(getEmployeeList.type, handleSetEmployees);
     yield takeLatest(deleteMultipleEmployees.type, handleDeleteMultipleEmployees);
+    yield takeLatest(pagination.type, handlePagination);
 }

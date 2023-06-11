@@ -14,7 +14,6 @@ export const requestGetEmployees = () => {
 };
 
 export const requestDeleteMultipleEmployees = (deleteArr: number[]) => {
-    console.log('deleteArr', deleteArr);
     return axios({
         method: 'DELETE',
         baseURL: API_URL,
@@ -24,6 +23,17 @@ export const requestDeleteMultipleEmployees = (deleteArr: number[]) => {
         },
         data: {
             record_ids: deleteArr,
+        },
+    });
+};
+
+export const requestPagination = (currentPage: number) => {
+    return axios({
+        method: 'GET',
+        baseURL: API_URL,
+        url: `/employee?page=${currentPage}`,
+        headers: {
+            authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
         },
     });
 };

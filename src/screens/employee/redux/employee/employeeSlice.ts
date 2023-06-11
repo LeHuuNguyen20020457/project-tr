@@ -36,11 +36,10 @@ const employeeSlice = createSlice({
         data: [],
         deleteArr: [],
         loading: true,
+        totalPageCount: 0,
     },
     reducers: {
-        getEmployeeList() {
-            console.log('getEmployeeList');
-        },
+        getEmployeeList() {},
         setEmpoloyeeList(state, action) {
             return {
                 ...state,
@@ -48,21 +47,27 @@ const employeeSlice = createSlice({
             };
         },
         deleteMultipleEmployees(state, action) {
-            console.log('deleteMultipleEmployees ', action.payload);
             return {
                 ...state,
                 deleteArr: action.payload,
             };
         },
         setLoading(state, action) {
-            console.log('setLoading');
             return {
                 ...state,
                 loading: action.payload,
             };
         },
+        setTotalPageCount(state, action) {
+            return {
+                ...state,
+                totalPageCount: action.payload,
+            };
+        },
+        pagination(state, action) {},
     },
 });
 
-export const { getEmployeeList, setEmpoloyeeList, deleteMultipleEmployees, setLoading } = employeeSlice.actions;
+export const { getEmployeeList, setEmpoloyeeList, deleteMultipleEmployees, setLoading, setTotalPageCount, pagination } =
+    employeeSlice.actions;
 export default employeeSlice.reducer;

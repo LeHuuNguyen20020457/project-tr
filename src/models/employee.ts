@@ -53,5 +53,6 @@ export interface IEmployeeRedux {
         data: IDataEmployee[];
         deleteArr: number[];
         loading: boolean;
+        totalPageCount: number;
     };
 }

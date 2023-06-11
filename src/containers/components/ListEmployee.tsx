@@ -7,11 +7,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
     deleteMultipleEmployees,
     getEmployeeList,
+    pagination,
     setLoading,
 } from '../../screens/employee/redux/employee/employeeSlice';
 import { IDataEmployee, IEmployeeRedux } from '../../models/employee';
 import Table from './Table';
 import { Dialog } from '../common/dialog';
+import { Pagination } from '../common/pagination';
 
 interface IListEmployeeStyles {
     disabled: number;
@@ -78,7 +80,7 @@ function ListEmployee() {
     const [checkedList, setCheckedList] = React.useState<number[]>([]);
     const [disabled, setDisabled] = React.useState<number>(1);
     const [showDialog, setShowDialog] = React.useState<boolean>(false);
-    // const [page, setPage] = React.useState<number>(0);
+    const [currentPage, setCurrentPage] = React.useState<number>(1);
 
     const dispatch = useDispatch();
 
@@ -90,9 +92,18 @@ function ListEmployee() {
         return state.employee.data;
     });
 
+    const totalPageCount = useSelector((state: IEmployeeRedux): number => {
+        return state.employee.totalPageCount;
+    });
+
     const handleDeleteEmployee = () => {
         setShowDialog(true);
     };
+
+    useEffect(() => {
+        dispatch(setLoading(true));
+        dispatch(pagination(currentPage));
+    }, [currentPage]);
 
     const enterYes = React.useCallback(() => {
         dispatch(setLoading(true));
@@ -163,6 +174,12 @@ function ListEmployee() {
                 setCheckedList={setCheckedList}
             />
             <hr className="line"></hr>
+            <Pagination
+                className="pagination-bar"
+                currentPage={currentPage}
+                totalPageCount={totalPageCount}
+                onPageChange={(page: number) => setCurrentPage(page)}
+            ></Pagination>
         </ListEmployeeStyles>
     );
 }
