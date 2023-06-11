@@ -33,6 +33,16 @@ const IconStyles = styled.i<IAnimate>`
 `;
 
 const SelectStyles = styled.div<ISelectStyles>`
+    ${(props) =>
+        props.line
+            ? css`
+                  display: flex;
+                  margin: 20px 0;
+                  .p-label {
+                      width: 162px;
+                  }
+              `
+            : ''};
     .p-label {
         display: block;
         font-size: 16px;
@@ -62,7 +72,7 @@ const SelectStyles = styled.div<ISelectStyles>`
     .options {
         background-color: ${(props) => props.theme.colorInput};
         width: 276px;
-        height: 100px;
+        /* height: 100px; */
         margin-top: 4px;
         border-radius: 6px;
         display: ${(props) => (props.hiddenoption ? 'none' : 'flex')};
@@ -98,24 +108,34 @@ const SelectStyles = styled.div<ISelectStyles>`
 export type SelectProps<T extends FieldValues> = {
     name: Path<T>;
     register: UseFormRegister<T>;
-    required: boolean;
+    required?: boolean;
     setValue: (
         name: keyof T,
         value: ReturnType<<T>() => T> | any,
         config?: Partial<{ shouldValidate: boolean; shouldDirty: boolean; shouldTouch: boolean }> | undefined,
     ) => void;
-    errors: FieldErrors<T>;
+    errors?: FieldErrors<T>;
     options: IOptions[];
     label?: string;
+    line?: number;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-function Select<T extends FieldValues>({ name, register, required, setValue, errors, options, label }: SelectProps<T>) {
+function Select<T extends FieldValues>({
+    name,
+    register,
+    required,
+    setValue,
+    errors,
+    options,
+    label,
+    line,
+}: SelectProps<T>) {
     const [isAnimating, setIsAnimating] = React.useState<number>(0);
     const [hiddenoption, setHiddenoption] = React.useState<number>(1);
     const [selectOption, setSelectOption] = React.useState<string | null>(null);
 
     const errormessage = errors?.[name as string]?.message ? 1 : 0;
-    console.log(errormessage);
+    // console.log(errormessage);
 
     const handleRotate = () => {
         if (isAnimating) {
@@ -134,31 +154,36 @@ function Select<T extends FieldValues>({ name, register, required, setValue, err
     };
 
     return (
-        <SelectStyles hiddenoption={hiddenoption} errormessage={errormessage}>
-            <p className="p-label">{label}: </p>
-            <div className="selectOption" onClick={handleRotate}>
-                <p>{selectOption ? selectOption : label}</p>
-                <IconStyles
-                    className="fa-solid fa-angle-down"
-                    onClick={handleRotate}
-                    animate={isAnimating}
-                ></IconStyles>
+        <SelectStyles hiddenoption={hiddenoption} errormessage={errormessage} line={line as number}>
+            <p className="p-label">
+                {label}
+                {required ? <span style={{ color: 'red' }}>*</span> : ''}:{' '}
+            </p>
+            <div>
+                <div className="selectOption" onClick={handleRotate}>
+                    <p>{selectOption ? selectOption : label}</p>
+                    <IconStyles
+                        className="fa-solid fa-angle-down"
+                        onClick={handleRotate}
+                        animate={isAnimating}
+                    ></IconStyles>
+                </div>
+                <div className="options" {...register(name, { required })}>
+                    {options.map((option, index): React.ReactNode => {
+                        return (
+                            <div
+                                key={index}
+                                data-option={option.option}
+                                data-value={option.value}
+                                onClick={handleSelectOption}
+                            >
+                                <p>{option.option}</p>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
-            <div className="options" {...register(name, { required })}>
-                {options.map((option, index): React.ReactNode => {
-                    return (
-                        <div
-                            key={index}
-                            data-option={option.option}
-                            data-value={option.value}
-                            onClick={handleSelectOption}
-                        >
-                            <p>{option.option}</p>
-                        </div>
-                    );
-                })}
-            </div>
-            <p className="error-message">{errors[name]?.message?.toString()}</p>
+            <p className="error-message">{errors && errors[name]?.message?.toString()}</p>
         </SelectStyles>
     );
 }

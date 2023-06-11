@@ -23,17 +23,23 @@ const DynamicTabStyles = styled.div`
         }
     }
 `;
-function DynamicTab() {
+
+type IDynamicTab = {
+    title: string;
+    children: React.ReactNode;
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+
+function DynamicTab({ title, children }: IDynamicTab) {
     return (
         <DynamicTabStyles>
             <div className="container-header">
-                <h5>Personal Information</h5>
+                <h5>{title}</h5>
                 <p>
                     Required (<span style={{ color: 'red' }}>*</span>)
                 </p>
             </div>
             <hr></hr>
-            <div>Code phan cac input vao day</div>
+            <div>{children}</div>
         </DynamicTabStyles>
     );
 }

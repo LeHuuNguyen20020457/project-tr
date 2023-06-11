@@ -22,9 +22,9 @@ export interface IDataEmployee {
     staff_id: string;
     name: string;
     gender: string | number | null;
-    card_number: string | null;
-    bank_account_no: string | null;
-    family_card_number: string | null;
+    card_number: string | number | null;
+    bank_account_no: string | number | null;
+    family_card_number: string | number | null;
     marriage_code: string | null;
     mother_name: string | null;
     pob: string | null;
