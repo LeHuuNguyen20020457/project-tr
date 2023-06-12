@@ -22,6 +22,14 @@ export interface ICreateOrUpdate {
     contracts: IContracts[];
     department_id: number;
     position_id: number;
+    basic_salary: number;
+    audit_salary: number;
+    safety_insurance: number;
+    health_insurance: number;
+    meal_allowance: number;
+    grade_id: number;
+    benefits: number[]; // không validate
+    remark: string; // không validate
 }
 
 interface IContracts {

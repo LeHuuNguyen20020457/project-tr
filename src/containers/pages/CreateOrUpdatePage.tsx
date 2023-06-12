@@ -13,6 +13,10 @@ import { Input } from '../common/input';
 import { Select } from '../common/select';
 import ContractInfo from '../components/ContractInfo';
 import EmploymentDetails from '../components/EmploymentDetails';
+import Salary from '../components/Salary';
+import { InputSalary } from '../common/inputSalary';
+import SalaryAndWages from '../components/SalaryAndWages';
+import Others from '../components/Others';
 
 const CreateOrUpdatePageStyles = styled.div`
     .title-button {
@@ -65,7 +69,7 @@ function CreateOrUpdatePage() {
         register,
         setValue,
         setError,
-        formState: { errors, touchedFields },
+        // formState: { errors, touchedFields },
     } = useForm<ICreateOrUpdate>({
         resolver: yupResolver(schemaCreateOrUpdate),
         defaultValues: {
@@ -87,6 +91,11 @@ function CreateOrUpdatePage() {
             // family_card_number: null,
             // safety_insurance_no: null,
             // health_insurance_no: null,
+            basic_salary: 2200000,
+            audit_salary: 2200000,
+            safety_insurance: 66000,
+            health_insurance: 132000,
+            meal_allowance: 34000,
         },
         mode: 'onChange',
     });
@@ -97,6 +106,7 @@ function CreateOrUpdatePage() {
         { label: 'Add new employee', active: true },
     ];
     const onSubmit: SubmitHandler<ICreateOrUpdate> = (data) => {};
+
     return (
         <CreateOrUpdatePageStyles>
             <Breadcrumb items={breadcrumbItems}></Breadcrumb>
@@ -133,6 +143,14 @@ function CreateOrUpdatePage() {
                         setValue={setValue}
                         register={register}
                     ></EmploymentDetails> */}
+                    {/* <Salary></Salary> */}
+                    {/* <SalaryAndWages
+                        control={control}
+                        errors={errors}
+                        setValue={setValue}
+                        watch={watch}
+                    ></SalaryAndWages> */}
+                    <Others register={register} setValue={setValue}></Others>
                 </DynamicTab>
             </form>
         </CreateOrUpdatePageStyles>

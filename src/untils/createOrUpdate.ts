@@ -23,4 +23,26 @@ export const schemaCreateOrUpdate = yup.object({
     type: yup.number().typeError('').required('Please input Gender'),
     department_id: yup.number(),
     position_id: yup.number(),
+    basic_salary: yup
+        .number()
+        .typeError('Please enter a valid number')
+        .min(0, 'Value must be greater than 0')
+        .required('Please input salary'),
+    audit_salary: yup
+        .number()
+        .typeError('Please enter a valid number')
+        .min(0, 'Value must be greater than 0')
+        .required('Please input Salary (Audit)'),
+    safety_insurance: yup
+        .number()
+        .typeError('Please enter a valid number')
+        .min(0, 'Value must be greater than 0')
+        .required('Please input Safety Insurance Amount'),
+    health_insurance: yup.number().typeError('Please enter a valid number').min(0, 'Value must be greater than 0'),
+    meal_allowance: yup
+        .number()
+        .typeError('Please enter a valid number')
+        .min(0, 'Value must be greater than 0')
+        .required('Please input Meal Allowance'),
+    grade_id: yup.number(),
 });

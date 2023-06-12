@@ -84,7 +84,6 @@ function LoginForm(): JSX.Element {
                     .catch(function (error) {
                         console.log(error);
                     });
-
                 navigate('/employee');
             })
             .catch((err) => {

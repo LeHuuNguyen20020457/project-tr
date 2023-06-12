@@ -100,6 +100,7 @@ const PositionOptions: IOptions[] = [
         value: 1,
     },
 ];
+
 function EmploymentDetails<T extends FieldValues>({ control, errors, setValue, register }: IPersonalInfo<T>) {
     return (
         <div>
