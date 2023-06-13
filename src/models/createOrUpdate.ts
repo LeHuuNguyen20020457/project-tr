@@ -30,6 +30,9 @@ export interface ICreateOrUpdate {
     grade_id: number;
     benefits: number[]; // không validate
     remark: string; // không validate
+
+    //nhug thuoc tinh cua contracts
+    contract_name: string;
 }
 
 interface IContracts {

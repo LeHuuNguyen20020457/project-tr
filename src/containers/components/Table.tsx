@@ -320,62 +320,63 @@ function Table<T extends IDataEmployee>({
                     </tbody>
                 ) : (
                     <tbody>
-                        {EmployeeList?.map((employee: T, index: number): React.ReactNode => {
-                            return (
-                                <tr key={index}>
-                                    <th>
-                                        <span>
-                                            {!checkedList.includes(employee.id) ? (
-                                                <input
-                                                    type="checkbox"
-                                                    value={employee.id}
-                                                    onChange={handleSelectEmployee}
-                                                    checked={checkedList?.includes(employee.id) ? true : false}
-                                                />
-                                            ) : (
-                                                <div onClick={handleCancelCheck} data-id={employee.id}>
-                                                    <svg
-                                                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-1k33q06"
-                                                        focusable="false"
-                                                        aria-hidden="true"
-                                                        viewBox="0 0 24 24"
-                                                        data-testid="CheckBoxIcon"
-                                                        style={{ fill: '#30A46C' }}
-                                                    >
-                                                        <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
-                                                    </svg>
-                                                </div>
-                                            )}
-                                        </span>
-                                    </th>
-                                    <th>{employee.staff_id}</th>
-                                    <th>{employee.name}</th>
-                                    <th>{employee.gender}</th>
-                                    <th>{employee.card_number}</th>
-                                    <th>{employee.bank_account_no}</th>
-                                    <th>{employee.family_card_number}</th>
-                                    <th>{employee.marriage_code}</th>
-                                    <th>{employee.mother_name}</th>
-                                    <th>{employee.pob}</th>
-                                    <th>{employee.dob}</th>
-                                    <th>{employee.home_address_1}</th>
-                                    <th>{employee.home_address_2}</th>
-                                    <th>{employee.nc_id}</th>
-                                    <th>{employee.contract_start_date}</th>
-                                    <th>{employee.contracts?.[0]?.contract_date}</th>
-                                    <th>{employee.contracts?.[1]?.contract_date}</th>
-                                    <th>{employee.contracts?.[2]?.contract_date}</th>
-                                    <th>{employee.department_name}</th>
-                                    <th>{employee.type}</th>
-                                    <th>{employee.basic_salary}</th>
-                                    <th>{employee.position_name}</th>
-                                    <th>{employee.entitle_ot}</th>
-                                    <th>{employee.meal_allowance_paid}</th>
-                                    <th>{employee.meal_allowance}</th>
-                                    <th>{employee.grade_name}</th>
-                                </tr>
-                            );
-                        })}
+                        {EmployeeList &&
+                            EmployeeList?.map((employee: T, index: number): React.ReactNode => {
+                                return (
+                                    <tr key={index}>
+                                        <th>
+                                            <span>
+                                                {!checkedList.includes(employee.id) ? (
+                                                    <input
+                                                        type="checkbox"
+                                                        value={employee.id}
+                                                        onChange={handleSelectEmployee}
+                                                        checked={checkedList?.includes(employee.id) ? true : false}
+                                                    />
+                                                ) : (
+                                                    <div onClick={handleCancelCheck} data-id={employee.id}>
+                                                        <svg
+                                                            className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-1k33q06"
+                                                            focusable="false"
+                                                            aria-hidden="true"
+                                                            viewBox="0 0 24 24"
+                                                            data-testid="CheckBoxIcon"
+                                                            style={{ fill: '#30A46C' }}
+                                                        >
+                                                            <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
+                                                        </svg>
+                                                    </div>
+                                                )}
+                                            </span>
+                                        </th>
+                                        <th>{employee.staff_id}</th>
+                                        <th>{employee.name}</th>
+                                        <th>{employee.gender}</th>
+                                        <th>{employee.card_number}</th>
+                                        <th>{employee.bank_account_no}</th>
+                                        <th>{employee.family_card_number}</th>
+                                        <th>{employee.marriage_code}</th>
+                                        <th>{employee.mother_name}</th>
+                                        <th>{employee.pob}</th>
+                                        <th>{employee.dob}</th>
+                                        <th>{employee.home_address_1}</th>
+                                        <th>{employee.home_address_2}</th>
+                                        <th>{employee.nc_id}</th>
+                                        <th>{employee.contract_start_date}</th>
+                                        <th>{employee.contracts?.[0]?.contract_date}</th>
+                                        <th>{employee.contracts?.[1]?.contract_date}</th>
+                                        <th>{employee.contracts?.[2]?.contract_date}</th>
+                                        <th>{employee.department_name}</th>
+                                        <th>{employee.type}</th>
+                                        <th>{employee.basic_salary}</th>
+                                        <th>{employee.position_name}</th>
+                                        <th>{employee.entitle_ot}</th>
+                                        <th>{employee.meal_allowance_paid}</th>
+                                        <th>{employee.meal_allowance}</th>
+                                        <th>{employee.grade_name}</th>
+                                    </tr>
+                                );
+                            })}
                     </tbody>
                 )}
             </table>

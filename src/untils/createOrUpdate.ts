@@ -45,4 +45,7 @@ export const schemaCreateOrUpdate = yup.object({
         .min(0, 'Value must be greater than 0')
         .required('Please input Meal Allowance'),
     grade_id: yup.number(),
+
+    //nhung thuoc tinh cua contracts
+    contract_name: yup.string(),
 });

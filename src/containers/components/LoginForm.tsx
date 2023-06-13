@@ -71,19 +71,6 @@ function LoginForm(): JSX.Element {
         })
             .then((res) => {
                 localStorage.setItem(ACCESS_TOKEN, res.data.data.token);
-
-                axios({
-                    method: 'GET',
-                    baseURL: API_URL,
-                    url: '/user/detail',
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
-                    },
-                })
-                    .then(function (response) {})
-                    .catch(function (error) {
-                        console.log(error);
-                    });
                 navigate('/employee');
             })
             .catch((err) => {

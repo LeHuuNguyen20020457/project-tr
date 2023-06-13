@@ -1,8 +1,20 @@
 import React, { useEffect, ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { UseFormRegister, Path, SetValueConfig, FieldErrors, FieldValue, FieldValues } from 'react-hook-form';
+import {
+    UseFormRegister,
+    Path,
+    SetValueConfig,
+    FieldErrors,
+    FieldValue,
+    FieldValues,
+    UseFormGetValues,
+} from 'react-hook-form';
+import axios from 'axios';
 
 import { IOptions } from '../../models/login';
+import { API_URL } from '../../constrants/config';
+import { ACCESS_TOKEN } from '../../constrants/localstore';
+import { number } from 'yup';
 
 const OthersStyles = styled.div`
     display: flex;
@@ -37,6 +49,26 @@ const OthersStyles = styled.div`
                 border: none;
                 width: 360px;
             }
+        }
+        .grade-selected-item {
+            min-width: 100px;
+            max-width: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background-color: #f1f3f5;
+            padding: 4px 0;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 400px;
+        }
+        .grade-selected-container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 372px;
+            gap: 10px;
+            margin-top: 10px;
         }
     }
     .option-grade,
@@ -300,60 +332,71 @@ const OthersStyles = styled.div`
     }
 `;
 
-const GradeOptions: IOptions[] = [
-    {
-        option: 'longnguyen',
-        value: 27,
-    },
-    {
-        option: 'thu',
-        value: 9,
-    },
+// const GradeOptions: IOptions[] = [
+//     {
+//         option: 'longnguyen',
+//         value: 27,
+//     },
+//     {
+//         option: 'thu',
+//         value: 9,
+//     },
 
-    {
-        option: 'Employee Grading 3',
-        value: 7,
-    },
-    {
-        option: 'Employee Grading 7',
-        value: 6,
-    },
-    {
-        option: 'Employee Grading 5',
-        value: 5,
-    },
-    {
-        option: 'Employee Grading 4',
-        value: 4,
-    },
-    {
-        option: 'Employee Grading 2',
-        value: 3,
-    },
-    {
-        option: 'Employee Grading 1',
-        value: 1,
-    },
-];
+//     {
+//         option: 'Employee Grading 3',
+//         value: 7,
+//     },
+//     {
+//         option: 'Employee Grading 7',
+//         value: 6,
+//     },
+//     {
+//         option: 'Employee Grading 5',
+//         value: 5,
+//     },
+//     {
+//         option: 'Employee Grading 4',
+//         value: 4,
+//     },
+//     {
+//         option: 'Employee Grading 2',
+//         value: 3,
+//     },
+//     {
+//         option: 'Employee Grading 1',
+//         value: 1,
+//     },
+// ];
 
-const BenefitOptions: IOptions[] = [
-    {
-        option: 'HAHAH',
-        value: 20,
-    },
-    {
-        option: 'Canteen Service',
-        value: 3,
-    },
-    {
-        option: 'Medical Allowance',
-        value: 2,
-    },
-    {
-        option: 'Transportation Allowance',
-        value: 1,
-    },
-];
+// const BenefitOptions: IOptions[] = [
+//     {
+//         option: 'HAHAH',
+//         value: 20,
+//     },
+//     {
+//         option: 'Canteen Service',
+//         value: 3,
+//     },
+//     {
+//         option: 'Medical Allowance',
+//         value: 2,
+//     },
+//     {
+//         option: 'Transportation Allowance',
+//         value: 1,
+//     },
+// ];
+
+interface IGradeOption {
+    id: number;
+    name: string;
+    benefits: IBenefitOption[];
+}
+
+interface IBenefitOption {
+    id: number;
+    name: string;
+}
 
 interface ISelectOthers<T extends FieldValues> {
     register: UseFormRegister<T>;
@@ -362,15 +405,52 @@ interface ISelectOthers<T extends FieldValues> {
         value: ReturnType<<T>() => T> | any,
         config?: Partial<{ shouldValidate: boolean; shouldDirty: boolean; shouldTouch: boolean }> | undefined,
     ) => void;
+    getValues: UseFormGetValues<T>;
 }
 
-function Others<T extends FieldValues>({ register, setValue }: ISelectOthers<T>) {
+function Others<T extends FieldValues>({ register, setValue, getValues }: ISelectOthers<T>) {
     const [toggleIconDrade, setToggleIconDrade] = React.useState<boolean>(false);
     const [toggleIconBenefit, setToggleIconBenefit] = React.useState<boolean>(false);
+    const [gradeOption, setGradeOption] = React.useState<IGradeOption[]>([]);
+    const [gradeSelected, setGradeSelected] = React.useState<IGradeOption | null>(null);
     const [inputGrade, setInputGrade] = React.useState<string>('');
+    const [BenefitOptions, setBenefitOptions] = React.useState<IBenefitOption[]>([]);
     const [benefitArr, setBenefitArr] = React.useState<number[]>([]);
     const [inputBenefit, setInputBenefit] = React.useState<string>('');
     const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+
+    // callApi
+    useEffect(() => {
+        axios({
+            method: 'GET',
+            baseURL: API_URL,
+            url: '/grade',
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+            },
+        })
+            .then((res) => {
+                setGradeOption(res.data.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        axios({
+            method: 'GET',
+            baseURL: API_URL,
+            url: '/benefit',
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+            },
+        })
+            .then((res) => {
+                setBenefitOptions(res.data.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     // Grade
     const handleToggleIconDrade = () => {
@@ -386,7 +466,29 @@ function Others<T extends FieldValues>({ register, setValue }: ISelectOthers<T>)
     const handleCloseGrade = () => {
         setValue('grade_id', null);
         setInputGrade('');
+        setGradeSelected(null);
     };
+
+    React.useEffect(() => {
+        for (let i = 0; i < gradeOption.length; i++) {
+            if (gradeOption[i].id == Number(getValues('grade_id' as Path<T>))) {
+                setGradeSelected(gradeOption[i]);
+                return;
+            }
+        }
+    }, [getValues('grade_id' as Path<T>)]);
+
+    // BỎ ĐI CÁC BENEFIT MÀ GRADE ĐÃ CHỌN CÓ SẴN
+    React.useEffect(() => {
+        if (gradeSelected && BenefitOptions) {
+            const gradeSelectedId: number[] = [];
+            for (let i = 0; i < gradeSelected.benefits.length; i++) {
+                gradeSelectedId.push(gradeSelected.benefits[i].id);
+            }
+            const newBenefitOptions = BenefitOptions.filter((benefitItem) => !gradeSelectedId.includes(benefitItem.id));
+            setBenefitOptions(newBenefitOptions);
+        }
+    }, [gradeSelected]);
 
     //Benefit
     const handleToggleIconBenefit = () => {
@@ -451,20 +553,31 @@ function Others<T extends FieldValues>({ register, setValue }: ISelectOthers<T>)
                     </div>
                     {toggleIconDrade && (
                         <div className="option-grade">
-                            {GradeOptions.map((grade, index) => {
+                            {gradeOption &&
+                                gradeOption.map((grade, index) => {
+                                    return (
+                                        <div
+                                            key={index}
+                                            data-id={grade.id}
+                                            className="option"
+                                            onClick={handleSelectOptionsGrade}
+                                        >
+                                            <p>{grade.name}</p>
+                                        </div>
+                                    );
+                                })}
+                        </div>
+                    )}
+                    <div className="grade-selected-container">
+                        {gradeSelected &&
+                            gradeSelected.benefits.map((benefit, index) => {
                                 return (
-                                    <div
-                                        key={index}
-                                        data-id={grade.value}
-                                        className="option"
-                                        onClick={handleSelectOptionsGrade}
-                                    >
-                                        <p>{grade.option}</p>
+                                    <div key={index} className="grade-selected-item">
+                                        <p>{benefit.name}</p>
                                     </div>
                                 );
                             })}
-                        </div>
-                    )}
+                    </div>
                 </div>
             </div>
             <div className="container-input-benefit">
@@ -477,7 +590,7 @@ function Others<T extends FieldValues>({ register, setValue }: ISelectOthers<T>)
                                     <div key={index} className="item-select">
                                         <span>
                                             {truncateString(
-                                                BenefitOptions.find((item) => item.value === benefit)?.option as string,
+                                                BenefitOptions.find((item) => item.id === benefit)?.name as string,
                                             )}
                                         </span>
                                         <div data-id={benefit} onClick={handleDeleteItemBenefit}>
@@ -510,16 +623,16 @@ function Others<T extends FieldValues>({ register, setValue }: ISelectOthers<T>)
                                 return (
                                     <div
                                         key={index}
-                                        data-id={benefit.value}
+                                        data-id={benefit.id}
                                         className="option"
                                         onClick={handleSelectOptionsBenefit}
                                         style={
-                                            benefitArr.includes(benefit.value)
+                                            benefitArr.includes(benefit.id)
                                                 ? { backgroundColor: 'rgb(233, 249, 238)' }
                                                 : {}
                                         }
                                     >
-                                        <p>{benefit.option}</p>
+                                        <p>{benefit.name}</p>
                                     </div>
                                 );
                             })}

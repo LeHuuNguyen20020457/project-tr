@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import Breadcrumb from '../common/breadcrumb/Breadcrumb';
 import styled from 'styled-components';
-import { IBreadcrumbItem } from '../../models/employee';
+import { matchSorter } from 'match-sorter';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { IBreadcrumbItem, IDataEmployee, IEmployeeRedux } from '../../models/employee';
 import ListEmployee from '../components/ListEmployee';
+import { setEmpoloyeeList } from '../../screens/employee/redux/employee/employeeSlice';
 
 const EmployeePageStyles = styled.div`
     .title-search {
@@ -43,6 +47,39 @@ const EmployeePageStyles = styled.div`
 
 function EmployeePage() {
     const breadcrumbItems: IBreadcrumbItem[] = [{ label: 'General' }, { label: 'Employee Management', active: true }];
+    const dispatch = useDispatch();
+
+    let count = React.useRef<number>(0);
+    const EmployeeListCopy = React.useRef<IDataEmployee[]>([]);
+
+    const EmployeeList = useSelector((state: IEmployeeRedux): IDataEmployee[] => {
+        return state.employee.data;
+    });
+
+    React.useMemo(() => {
+        if (EmployeeList && count.current === 1) {
+            console.log(count.current);
+            count.current = count.current + 1;
+            EmployeeListCopy.current = EmployeeList;
+        } else {
+            count.current = count.current + 1;
+        }
+    }, [count.current]);
+
+    const handleSearchEmployee = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value) {
+            const nameArr: string[] = [];
+            for (let i = 0; i < EmployeeListCopy.current.length; i++) {
+                nameArr.push(EmployeeListCopy.current[i].name);
+            }
+            const nameSearch = matchSorter(nameArr, e.target.value);
+            const employeeArr = EmployeeListCopy.current.filter((item) => nameSearch.includes(item.name));
+            dispatch(setEmpoloyeeList(employeeArr));
+        } else {
+            dispatch(setEmpoloyeeList(EmployeeListCopy.current));
+        }
+    };
+
     return (
         <EmployeePageStyles>
             <Breadcrumb items={breadcrumbItems}></Breadcrumb>
@@ -52,7 +89,7 @@ function EmployeePage() {
                     <div className="search-icon">
                         <i className="fa-solid fa-magnifying-glass"></i>
                     </div>
-                    <input type="text" placeholder="Search..." />
+                    <input type="text" placeholder="Search..." onChange={handleSearchEmployee} />
                 </div>
             </div>
             <div>

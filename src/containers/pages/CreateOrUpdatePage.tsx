@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import clsx from 'clsx';
 
 import Breadcrumb from '../common/breadcrumb/Breadcrumb';
 import { IBreadcrumbItem } from '../../models/employee';
@@ -9,14 +10,13 @@ import DynamicTab from '../common/dynamicTab/DynamicTab';
 import PersonalInfo from '../components/PersonalInfo';
 import { schemaCreateOrUpdate } from '../../untils/createOrUpdate';
 import { ICreateOrUpdate } from '../../models/createOrUpdate';
-import { Input } from '../common/input';
-import { Select } from '../common/select';
+
 import ContractInfo from '../components/ContractInfo';
 import EmploymentDetails from '../components/EmploymentDetails';
-import Salary from '../components/Salary';
-import { InputSalary } from '../common/inputSalary';
+
 import SalaryAndWages from '../components/SalaryAndWages';
 import Others from '../components/Others';
+import { number, string } from 'yup';
 
 const CreateOrUpdatePageStyles = styled.div`
     .title-button {
@@ -46,6 +46,7 @@ const CreateOrUpdatePageStyles = styled.div`
             letter-spacing: -0.01em;
             color: ${(props) => props.theme.colorInput};
             border: none;
+            cursor: pointer;
         }
     }
     .btn-container {
@@ -57,11 +58,42 @@ const CreateOrUpdatePageStyles = styled.div`
             height: 42px;
             border-radius: 6px;
             border: none;
+            cursor: pointer;
+            font-weight: 400;
+            line-height: 1.71429;
+            font-size: 14px;
+        }
+
+        .btn-red {
+            color: rgb(255, 239, 239);
+            background-color: rgb(229, 72, 77);
+        }
+        .btn-light-red {
+            color: rgb(229, 72, 77);
+            background-color: rgb(255, 239, 239);
+        }
+        .btn-light-blue {
+            background-color: rgb(237, 246, 255);
+            color: rgb(0, 145, 255);
+        }
+        .btn-blue {
+            background-color: rgb(0, 129, 241);
+            color: white;
         }
     }
 `;
 
 function CreateOrUpdatePage() {
+    const [btnCurrent, setBtnCurrent] = useState<number>(1);
+    const [btnPrev, setBtnPrev] = useState<number | null>(null);
+
+    //1:xanh nhat  2:xanh dam  3:do nhat  4: do dam
+    const [statusBtnOne, setStatusBtnOne] = useState<number>(1);
+    const [statusBtnTwo, setStatusBtnTwo] = useState<number>(1);
+    const [statusBtnThree, setStatusBtnThree] = useState<number>(1);
+    const [statusBtnFour, setStatusBtnFour] = useState<number>(1);
+    const [statusBtnFive, setStatusBtnFive] = useState<number>(1);
+
     const {
         control,
         handleSubmit,
@@ -69,7 +101,8 @@ function CreateOrUpdatePage() {
         register,
         setValue,
         setError,
-        // formState: { errors, touchedFields },
+        formState: { errors, touchedFields },
+        getValues,
     } = useForm<ICreateOrUpdate>({
         resolver: yupResolver(schemaCreateOrUpdate),
         defaultValues: {
@@ -78,19 +111,10 @@ function CreateOrUpdatePage() {
             mother_name: '',
             dob: '',
             pob: '',
-            // ktp_no: null,
-            // nc_id: null,
             home_address_1: '',
             home_address_2: '',
-            // mobile_no: null,
-            // tel_no: null,
             marriage_id: 1,
-            // card_number: null,
-            // bank_account_no: null,
             bank_name: '',
-            // family_card_number: null,
-            // safety_insurance_no: null,
-            // health_insurance_no: null,
             basic_salary: 2200000,
             audit_salary: 2200000,
             safety_insurance: 66000,
@@ -105,7 +129,154 @@ function CreateOrUpdatePage() {
         { label: 'Employee Management', link: '/employee' },
         { label: 'Add new employee', active: true },
     ];
-    const onSubmit: SubmitHandler<ICreateOrUpdate> = (data) => {};
+    const onSubmit: SubmitHandler<ICreateOrUpdate> = (data) => {
+        console.log('data, ', data);
+    };
+
+    // console.log(watch(['name', 'gender', 'dob', 'ktp_no', 'nc_id']));
+    // console.log(watch(['contract_start_date', 'type']));
+    // console.log(watch(['basic_salary', 'audit_salary', 'safety_insurance', 'meal_allowance']));
+
+    useEffect(() => {
+        //lỗi mau do nhat khi out ra
+        if (btnPrev === 1) {
+            const value = watch(['name', 'gender', 'dob', 'ktp_no', 'nc_id']);
+            if (value.some((item) => item === undefined || item === null || item === '')) {
+                setStatusBtnOne(3);
+            } else {
+                setStatusBtnOne(1);
+            }
+        }
+        if (btnPrev === 2) {
+            const value = watch(['contract_start_date', 'type']);
+            if (value.some((item) => item === undefined || item === null || item === '')) {
+                setStatusBtnTwo(3);
+            } else {
+                setStatusBtnTwo(1);
+            }
+        }
+        if (btnPrev === 4) {
+            const value = watch(['basic_salary', 'audit_salary', 'safety_insurance', 'meal_allowance']);
+            if (value.some((item) => item === undefined || item === null || (item as number | string) === '')) {
+                setStatusBtnFour(3);
+            } else {
+                setStatusBtnFour(1);
+            }
+        }
+        if (btnPrev === 3) {
+            setStatusBtnThree(1);
+        }
+        if (btnPrev === 5) {
+            setStatusBtnFive(1);
+        }
+
+        //lỗi màu đỏ đậm khi nhấn vào
+        if (btnCurrent === 1) {
+            const value = watch(['name', 'gender', 'dob', 'ktp_no', 'nc_id']);
+            if (value.some((item) => item === undefined || item === null || item === '')) {
+                setStatusBtnOne(4);
+            } else {
+                setStatusBtnOne(2);
+            }
+        }
+        if (btnCurrent === 2) {
+            const value = watch(['contract_start_date', 'type']);
+            if (value.some((item) => item === undefined || item === null || item === '')) {
+                setStatusBtnTwo(4);
+            } else {
+                setStatusBtnTwo(2);
+            }
+        }
+        if (btnCurrent === 4) {
+            const value = watch(['basic_salary', 'audit_salary', 'safety_insurance', 'meal_allowance']);
+            if (value.some((item) => item === undefined || item === null || (item as number | string) === '')) {
+                setStatusBtnFour(4);
+            } else {
+                setStatusBtnFour(2);
+            }
+        }
+
+        // không lỗi mau xanh đậm cho nút 3 và 5
+        if (btnCurrent === 3) {
+            setStatusBtnThree(2);
+        }
+        if (btnCurrent === 5) {
+            setStatusBtnFive(2);
+        }
+    }, [btnPrev, btnCurrent]);
+
+    const handleClickBtnOne = () => {
+        setBtnCurrent((prev) => {
+            if (prev !== 1) {
+                setBtnPrev(prev);
+            }
+            return 1;
+        });
+    };
+
+    const handleClickBtnTwo = () => {
+        setBtnCurrent((prev) => {
+            if (prev !== 2) {
+                setBtnPrev(prev);
+            }
+            return 2;
+        });
+    };
+    const handleClickBtnThree = () => {
+        setBtnCurrent((prev) => {
+            if (prev !== 3) {
+                setBtnPrev(prev);
+            }
+            return 3;
+        });
+    };
+    const handleClickBtnFour = () => {
+        setBtnCurrent((prev) => {
+            if (prev !== 4) {
+                setBtnPrev(prev);
+            }
+            return 4;
+        });
+    };
+    const handleClickBtnFive = () => {
+        setBtnCurrent((prev) => {
+            if (prev !== 5) {
+                setBtnPrev(prev);
+            }
+            return 5;
+        });
+    };
+
+    const classNameBtnOne = clsx({
+        'btn-light-blue': statusBtnOne === 1,
+        'btn-blue': statusBtnOne === 2,
+        'btn-light-red': statusBtnOne === 3,
+        'btn-red': statusBtnOne === 4,
+    });
+
+    const classNameBtnTwo = clsx({
+        'btn-light-blue': statusBtnTwo === 1,
+        'btn-blue': statusBtnTwo === 2,
+        'btn-light-red': statusBtnTwo === 3,
+        'btn-red': statusBtnTwo === 4,
+    });
+
+    const classNameBtnThree = clsx({
+        'btn-light-blue': statusBtnThree === 1,
+        'btn-blue': statusBtnThree === 2,
+    });
+
+    const classNameBtnFour = clsx({
+        'btn-light-blue': statusBtnFour === 1,
+        'btn-blue': statusBtnFour === 2,
+        'btn-light-red': statusBtnFour === 3,
+        'btn-red': statusBtnFour === 4,
+    });
+
+    const classNameBtnFive = clsx({
+        'btn-light-blue': statusBtnFive === 1,
+        'btn-blue': statusBtnFive === 2,
+    });
 
     return (
         <CreateOrUpdatePageStyles>
@@ -116,42 +287,67 @@ function CreateOrUpdatePage() {
                     <button type="submit">Add</button>
                 </div>
                 <div className="btn-container">
-                    <button type="button">Employee Infomation</button>
-                    <button type="button">Contract Infomation</button>
-                    <button type="button">Employment Details</button>
-                    <button type="button">Salary & Wages</button>
-                    <button type="button">Other</button>
+                    <button className={classNameBtnOne} type="button" onClick={handleClickBtnOne}>
+                        Employee Infomation
+                    </button>
+
+                    <button className={classNameBtnTwo} type="button" onClick={handleClickBtnTwo}>
+                        Contract Infomation
+                    </button>
+
+                    <button className={classNameBtnThree} type="button" onClick={handleClickBtnThree}>
+                        Employment Details
+                    </button>
+
+                    <button className={classNameBtnFour} type="button" onClick={handleClickBtnFour}>
+                        Salary & Wages
+                    </button>
+
+                    <button className={classNameBtnFive} type="button" onClick={handleClickBtnFive}>
+                        Other
+                    </button>
                 </div>
-                <DynamicTab title="Personal Information">
-                    {/* <PersonalInfo
-                        control={control}
-                        errors={errors}
-                        setValue={setValue}
-                        register={register}
-                    ></PersonalInfo> */}
-
-                    {/* <ContractInfo
-                        control={control}
-                        errors={errors}
-                        setValue={setValue}
-                        register={register}
-                    ></ContractInfo> */}
-
-                    {/* <EmploymentDetails
-                        control={control}
-                        errors={errors}
-                        setValue={setValue}
-                        register={register}
-                    ></EmploymentDetails> */}
-                    {/* <Salary></Salary> */}
-                    {/* <SalaryAndWages
-                        control={control}
-                        errors={errors}
-                        setValue={setValue}
-                        watch={watch}
-                    ></SalaryAndWages> */}
-                    <Others register={register} setValue={setValue}></Others>
-                </DynamicTab>
+                {btnCurrent === 1 ? (
+                    <DynamicTab title="Personal Information">
+                        <PersonalInfo
+                            control={control}
+                            errors={errors}
+                            setValue={setValue}
+                            register={register}
+                        ></PersonalInfo>
+                    </DynamicTab>
+                ) : btnCurrent === 2 ? (
+                    <DynamicTab title="Contract Information">
+                        <ContractInfo
+                            control={control}
+                            errors={errors}
+                            setValue={setValue}
+                            register={register}
+                        ></ContractInfo>
+                    </DynamicTab>
+                ) : btnCurrent === 3 ? (
+                    <DynamicTab title="Employment Details">
+                        <EmploymentDetails
+                            control={control}
+                            errors={errors}
+                            setValue={setValue}
+                            register={register}
+                        ></EmploymentDetails>
+                    </DynamicTab>
+                ) : btnCurrent === 4 ? (
+                    <DynamicTab title="Salary & Wages">
+                        <SalaryAndWages
+                            control={control}
+                            errors={errors}
+                            setValue={setValue}
+                            watch={watch}
+                        ></SalaryAndWages>
+                    </DynamicTab>
+                ) : (
+                    <DynamicTab title="Others">
+                        <Others register={register} setValue={setValue} getValues={getValues}></Others>
+                    </DynamicTab>
+                )}
             </form>
         </CreateOrUpdatePageStyles>
     );

@@ -135,7 +135,6 @@ function Select<T extends FieldValues>({
     const [selectOption, setSelectOption] = React.useState<string | null>(null);
 
     const errormessage = errors?.[name as string]?.message ? 1 : 0;
-    // console.log(errormessage);
 
     const handleRotate = () => {
         if (isAnimating) {

@@ -1,7 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 import { Button } from '../common/button';
+import { Dialog } from '../common/dialog';
+import { API_URL } from '../../constrants/config';
+import { ACCESS_TOKEN } from '../../constrants/localstore';
 
 const HeaderStyles = styled.div`
     display: flex;
@@ -132,8 +139,32 @@ const NavLinkStyles = styled.div`
 
 function Header() {
     const [showInfo, setShowInfo] = React.useState<boolean>(false);
+    const [showDialog, setShowDialog] = React.useState<boolean>(false);
+    const navigate = useNavigate();
+
     const handleShowInfo = () => {
         setShowInfo(!showInfo);
+    };
+    const handleSignOut = () => {
+        setShowDialog(true);
+    };
+
+    const enterYes = () => {
+        axios({
+            method: 'POST',
+            baseURL: API_URL,
+            url: '/logout',
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+            },
+        })
+            .then(function (response) {
+                localStorage.removeItem(ACCESS_TOKEN);
+                navigate('/auth/sign-in');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
     return (
         <HeaderStyles>
@@ -171,11 +202,16 @@ function Header() {
                     <p>Research and Development again</p>
                     <p>Staff ID: SP-000429</p>
                 </div>
-                <Button title="Sign Out" width="272px" type="button"></Button>
+                <div onClick={handleSignOut}>
+                    <Button title="Sign Out" width="272px" type="button"></Button>
+                </div>
                 <NavLinkStyles>
-                    <NavLink to={'/'}>Reset Password</NavLink>
+                    <NavLink to={'/change-password-first-login'}>Reset Password</NavLink>
                 </NavLinkStyles>
             </div>
+            {showDialog && (
+                <Dialog title="Do you wish to sign out?" setShowDialog={setShowDialog} enterYes={enterYes}></Dialog>
+            )}
         </HeaderStyles>
     );
 }

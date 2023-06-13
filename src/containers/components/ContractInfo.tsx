@@ -173,7 +173,7 @@ function ContractInfo<T extends FieldValues>({ control, errors, setValue, regist
                 register={register}
                 errors={errors}
                 required
-                label="Gender"
+                label="Employee Type"
                 options={TypeOptions}
                 line={1}
             ></Select>
@@ -195,7 +195,7 @@ function ContractInfo<T extends FieldValues>({ control, errors, setValue, regist
                                 type="date"
                             ></Input>
                             <Input
-                                name={'name' as Path<T>}
+                                name={'contract_name' as Path<T>}
                                 control={control}
                                 label="Contract Name"
                                 line={1}

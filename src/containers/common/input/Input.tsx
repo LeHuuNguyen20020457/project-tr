@@ -106,7 +106,7 @@ function Input<T extends FieldValues>({
                                 </div>
                             </div>
                         ) : (
-                            <input className="input-text" {...field} type={type}></input>
+                            <input className="input-text" {...field} type={type} value={field.value || ''}></input>
                         )
                     }
                 ></Controller>
