@@ -476,7 +476,11 @@ function Others<T extends FieldValues>({ register, setValue, getValues }: ISelec
                 return;
             }
         }
-    }, [getValues('grade_id' as Path<T>)]);
+    }, [getValues('grade_id' as Path<T>) && gradeOption]);
+
+    useEffect(() => {
+        gradeSelected && setInputGrade(gradeSelected?.name as string);
+    }, [gradeSelected]);
 
     // BỎ ĐI CÁC BENEFIT MÀ GRADE ĐÃ CHỌN CÓ SẴN
     React.useEffect(() => {
@@ -496,29 +500,42 @@ function Others<T extends FieldValues>({ register, setValue, getValues }: ISelec
     };
 
     const handleSelectOptionsBenefit = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (benefitArr.includes(Number(e.currentTarget.getAttribute('data-id')))) {
-            setBenefitArr(benefitArr.filter((item) => item !== Number(e.currentTarget.getAttribute('data-id'))));
+        if (getValues('benefits' as Path<T>).includes(Number(e.currentTarget.getAttribute('data-id')))) {
+            const newArr = getValues('benefits' as Path<T>).filter(
+                (item: number) => item !== Number(e.currentTarget.getAttribute('data-id')),
+            );
+            setValue('benefits', newArr);
+            setBenefitArr(newArr);
         } else {
-            setBenefitArr([...benefitArr, Number(e.currentTarget.getAttribute('data-id'))]);
+            const newArr = [...getValues('benefits' as Path<T>), Number(e.currentTarget.getAttribute('data-id'))];
+            setValue('benefits', newArr);
+            setBenefitArr(newArr);
         }
     };
 
     function truncateString(str: string): string {
-        if (str.length > 8) {
+        if (str && str.length > 8) {
             return str.substring(0, 8) + '...';
         }
         return str;
     }
 
     const handleDeleteAllBenefit = () => {
+        setValue('benefits', []);
         setBenefitArr([]);
     };
 
     const handleDeleteItemBenefit = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (benefitArr.includes(Number(e.currentTarget.getAttribute('data-id')))) {
-            setBenefitArr(benefitArr.filter((item) => item !== Number(e.currentTarget.getAttribute('data-id'))));
+        if (getValues('benefits' as Path<T>).includes(Number(e.currentTarget.getAttribute('data-id')))) {
+            const newArr: number[] = getValues('benefits' as Path<T>).filter(
+                (item: number) => item !== Number(e.currentTarget.getAttribute('data-id')),
+            );
+            setValue('benefits', newArr);
+            setBenefitArr(newArr);
         } else {
-            setBenefitArr([...benefitArr, Number(e.currentTarget.getAttribute('data-id'))]);
+            const newArr = [...getValues('benefits' as Path<T>), Number(e.currentTarget.getAttribute('data-id'))];
+            setValue('benefits', newArr);
+            setBenefitArr(newArr);
         }
     };
 
@@ -527,14 +544,17 @@ function Others<T extends FieldValues>({ register, setValue, getValues }: ISelec
     };
 
     useEffect(() => {
-        setValue('benefits', benefitArr as number[]);
-    }, [benefitArr]);
+        if (getValues('benefits' as Path<T>).length > 0) {
+            setBenefitArr(getValues('benefits' as Path<T>));
+        }
+    }, []);
 
     //upload-file
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files && event.target.files[0];
         console.log(file);
     };
+
     return (
         <OthersStyles>
             <div className="container-input-grade">
@@ -585,20 +605,22 @@ function Others<T extends FieldValues>({ register, setValue, getValues }: ISelec
                 <div className="input-select">
                     <div className="input-container">
                         <div className="input-benefit">
-                            {benefitArr.map((benefit, index) => {
-                                return (
-                                    <div key={index} className="item-select">
-                                        <span>
-                                            {truncateString(
-                                                BenefitOptions.find((item) => item.id === benefit)?.name as string,
-                                            )}
-                                        </span>
-                                        <div data-id={benefit} onClick={handleDeleteItemBenefit}>
-                                            <i className="fa-solid fa-xmark"></i>
+                            {benefitArr &&
+                                benefitArr.map((benefit: number, index: number) => {
+                                    return (
+                                        <div key={index} className="item-select">
+                                            <span>
+                                                {truncateString(
+                                                    BenefitOptions.find((item) => item.id == Number(benefit))
+                                                        ?.name as string,
+                                                )}
+                                            </span>
+                                            <div data-id={benefit} onClick={handleDeleteItemBenefit}>
+                                                <i className="fa-solid fa-xmark"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
                             <input
                                 type="text"
                                 {...register('benefits' as Path<T>)}
@@ -619,23 +641,24 @@ function Others<T extends FieldValues>({ register, setValue, getValues }: ISelec
                     </div>
                     {toggleIconBenefit && (
                         <div className="option-benefit">
-                            {BenefitOptions.map((benefit, index) => {
-                                return (
-                                    <div
-                                        key={index}
-                                        data-id={benefit.id}
-                                        className="option"
-                                        onClick={handleSelectOptionsBenefit}
-                                        style={
-                                            benefitArr.includes(benefit.id)
-                                                ? { backgroundColor: 'rgb(233, 249, 238)' }
-                                                : {}
-                                        }
-                                    >
-                                        <p>{benefit.name}</p>
-                                    </div>
-                                );
-                            })}
+                            {BenefitOptions &&
+                                BenefitOptions.map((benefit, index) => {
+                                    return (
+                                        <div
+                                            key={index}
+                                            data-id={benefit.id}
+                                            className="option"
+                                            onClick={handleSelectOptionsBenefit}
+                                            style={
+                                                getValues('benefits' as Path<T>).includes(benefit.id)
+                                                    ? { backgroundColor: 'rgb(233, 249, 238)' }
+                                                    : {}
+                                            }
+                                        >
+                                            <p>{benefit.name}</p>
+                                        </div>
+                                    );
+                                })}
                         </div>
                     )}
                 </div>

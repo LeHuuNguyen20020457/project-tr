@@ -16,7 +16,6 @@ import EmploymentDetails from '../components/EmploymentDetails';
 
 import SalaryAndWages from '../components/SalaryAndWages';
 import Others from '../components/Others';
-import { number, string } from 'yup';
 
 const CreateOrUpdatePageStyles = styled.div`
     .title-button {
@@ -31,7 +30,7 @@ const CreateOrUpdatePageStyles = styled.div`
             color: ${(props) => props.theme.typographyH3};
         }
 
-        button {
+        .btn-add {
             width: 78px;
             height: 48px;
             background: #c1c8cd;
@@ -47,6 +46,9 @@ const CreateOrUpdatePageStyles = styled.div`
             color: ${(props) => props.theme.colorInput};
             border: none;
             cursor: pointer;
+        }
+        .btnAddBlue {
+            background: blue;
         }
     }
     .btn-container {
@@ -93,6 +95,7 @@ function CreateOrUpdatePage() {
     const [statusBtnThree, setStatusBtnThree] = useState<number>(1);
     const [statusBtnFour, setStatusBtnFour] = useState<number>(1);
     const [statusBtnFive, setStatusBtnFive] = useState<number>(1);
+    const [btnAdd, setBtnAdd] = useState<number>(0);
 
     const {
         control,
@@ -101,7 +104,7 @@ function CreateOrUpdatePage() {
         register,
         setValue,
         setError,
-        formState: { errors, touchedFields },
+        formState: { errors, touchedFields, isValid },
         getValues,
     } = useForm<ICreateOrUpdate>({
         resolver: yupResolver(schemaCreateOrUpdate),
@@ -129,10 +132,12 @@ function CreateOrUpdatePage() {
         { label: 'Employee Management', link: '/employee' },
         { label: 'Add new employee', active: true },
     ];
+
     const onSubmit: SubmitHandler<ICreateOrUpdate> = (data) => {
         console.log('data, ', data);
     };
 
+    // console.log('watch ', getValues('benefits'));
     // console.log(watch(['name', 'gender', 'dob', 'ktp_no', 'nc_id']));
     // console.log(watch(['contract_start_date', 'type']));
     // console.log(watch(['basic_salary', 'audit_salary', 'safety_insurance', 'meal_allowance']));
@@ -278,13 +283,27 @@ function CreateOrUpdatePage() {
         'btn-blue': statusBtnFive === 2,
     });
 
+    const classNameBtnAdd = clsx('btn-add', {
+        btnAddBlue: btnAdd,
+    });
+
+    useEffect(() => {
+        if (isValid) {
+            setBtnAdd(1);
+        } else {
+            setBtnAdd(0);
+        }
+    }, [isValid]);
+
     return (
         <CreateOrUpdatePageStyles>
             <Breadcrumb items={breadcrumbItems}></Breadcrumb>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="title-button">
                     <h3>Employee Management</h3>
-                    <button type="submit">Add</button>
+                    <button className={classNameBtnAdd} type="submit">
+                        Add
+                    </button>
                 </div>
                 <div className="btn-container">
                     <button className={classNameBtnOne} type="button" onClick={handleClickBtnOne}>
@@ -314,6 +333,7 @@ function CreateOrUpdatePage() {
                             errors={errors}
                             setValue={setValue}
                             register={register}
+                            getValues={getValues}
                         ></PersonalInfo>
                     </DynamicTab>
                 ) : btnCurrent === 2 ? (
@@ -323,6 +343,7 @@ function CreateOrUpdatePage() {
                             errors={errors}
                             setValue={setValue}
                             register={register}
+                            getValues={getValues}
                         ></ContractInfo>
                     </DynamicTab>
                 ) : btnCurrent === 3 ? (
@@ -332,6 +353,7 @@ function CreateOrUpdatePage() {
                             errors={errors}
                             setValue={setValue}
                             register={register}
+                            getValues={getValues}
                         ></EmploymentDetails>
                     </DynamicTab>
                 ) : btnCurrent === 4 ? (

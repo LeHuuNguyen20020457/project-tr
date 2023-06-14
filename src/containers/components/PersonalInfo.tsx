@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Control, FieldErrors, FieldValues, Path, UseFormRegister } from 'react-hook-form';
+import { Control, FieldErrors, FieldValues, Path, UseFormRegister, UseFormGetValues } from 'react-hook-form';
 import styled from 'styled-components';
 import { Input } from '../common/input';
 import { IOptions } from '../../models/login';
@@ -23,6 +23,7 @@ type IPersonalInfo<T extends FieldValues> = {
         value: ReturnType<<T>() => T> | any,
         config?: Partial<{ shouldValidate: boolean; shouldDirty: boolean; shouldTouch: boolean }> | undefined,
     ) => void;
+    getValues?: UseFormGetValues<ICreateOrUpdate>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const genderList: IOptions[] = [
@@ -67,7 +68,7 @@ const genderList: IOptions[] = [
 //     },
 // ];
 
-function PersonalInfo<T extends FieldValues>({ control, errors, setValue, register }: IPersonalInfo<T>) {
+function PersonalInfo<T extends FieldValues>({ control, errors, setValue, register, getValues }: IPersonalInfo<T>) {
     const [marriageStatus, setMarriageStatus] = React.useState<IOptions[]>([]);
 
     React.useEffect(() => {
@@ -114,6 +115,7 @@ function PersonalInfo<T extends FieldValues>({ control, errors, setValue, regist
                     label="Gender"
                     options={genderList}
                     line={1}
+                    getValues={getValues}
                 ></Select>
                 <Input name={'mother_name' as Path<T>} control={control} label="Mother_name" line={1}></Input>
                 <Input
@@ -163,6 +165,7 @@ function PersonalInfo<T extends FieldValues>({ control, errors, setValue, regist
                     label="Marriage Status"
                     options={marriageStatus}
                     line={1}
+                    getValues={getValues}
                 ></Select>
                 <Input
                     name={'card_number' as Path<T>}

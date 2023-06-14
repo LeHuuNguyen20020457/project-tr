@@ -1,5 +1,5 @@
 import React from 'react';
-import { Control, FieldErrors, FieldValues, UseFormRegister, Path } from 'react-hook-form';
+import { Control, FieldErrors, FieldValues, UseFormRegister, Path, UseFormGetValues } from 'react-hook-form';
 import { styled } from 'styled-components';
 
 import { ICreateOrUpdate } from '../../models/createOrUpdate';
@@ -138,6 +138,7 @@ type IPersonalInfo<T extends FieldValues> = {
         value: ReturnType<<T>() => T> | any,
         config?: Partial<{ shouldValidate: boolean; shouldDirty: boolean; shouldTouch: boolean }> | undefined,
     ) => void;
+    getValues: UseFormGetValues<ICreateOrUpdate>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const TypeOptions: IOptions[] = [
@@ -155,7 +156,7 @@ const TypeOptions: IOptions[] = [
     },
 ];
 
-function ContractInfo<T extends FieldValues>({ control, errors, setValue, register }: IPersonalInfo<T>) {
+function ContractInfo<T extends FieldValues>({ control, errors, setValue, register, getValues }: IPersonalInfo<T>) {
     return (
         <ContractInfoStyles>
             <Input
@@ -176,6 +177,7 @@ function ContractInfo<T extends FieldValues>({ control, errors, setValue, regist
                 label="Employee Type"
                 options={TypeOptions}
                 line={1}
+                getValues={getValues}
             ></Select>
             <div>
                 <span className="title-span">

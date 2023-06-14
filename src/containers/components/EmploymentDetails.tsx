@@ -1,5 +1,5 @@
 import React from 'react';
-import { Control, FieldErrors, FieldValues, UseFormRegister, Path } from 'react-hook-form';
+import { Control, FieldErrors, FieldValues, UseFormRegister, Path, UseFormGetValues } from 'react-hook-form';
 import { styled } from 'styled-components';
 
 import { ICreateOrUpdate } from '../../models/createOrUpdate';
@@ -48,6 +48,7 @@ type IPersonalInfo<T extends FieldValues> = {
         value: ReturnType<<T>() => T> | any,
         config?: Partial<{ shouldValidate: boolean; shouldDirty: boolean; shouldTouch: boolean }> | undefined,
     ) => void;
+    getValues: UseFormGetValues<ICreateOrUpdate>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 // const DepartmentOptions: IOptions[] = [
@@ -109,7 +110,13 @@ type IPersonalInfo<T extends FieldValues> = {
 //     name: string;
 // }
 
-function EmploymentDetails<T extends FieldValues>({ control, errors, setValue, register }: IPersonalInfo<T>) {
+function EmploymentDetails<T extends FieldValues>({
+    control,
+    errors,
+    setValue,
+    register,
+    getValues,
+}: IPersonalInfo<T>) {
     const [DepartmentOptions, setDepartmentOptions] = React.useState<IOptions[]>([]);
     const [PositionOptions, setPositionOptions] = React.useState<IOptions[]>([]);
 
@@ -167,6 +174,7 @@ function EmploymentDetails<T extends FieldValues>({ control, errors, setValue, r
                 line={1}
                 label="Department"
                 options={DepartmentOptions}
+                getValues={getValues}
             ></Select>
             <Select<ICreateOrUpdate>
                 name="position_id"
@@ -175,6 +183,7 @@ function EmploymentDetails<T extends FieldValues>({ control, errors, setValue, r
                 line={1}
                 label="Position"
                 options={PositionOptions}
+                getValues={getValues}
             ></Select>
             <EmploymentDetailsStyles>
                 <div className="input-checkbox">

@@ -1,6 +1,14 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { UseFormRegister, Path, SetValueConfig, FieldErrors, FieldValue, FieldValues } from 'react-hook-form';
+import {
+    UseFormRegister,
+    Path,
+    SetValueConfig,
+    FieldErrors,
+    FieldValue,
+    FieldValues,
+    UseFormGetValues,
+} from 'react-hook-form';
 import { IAnimate, ILoginForm, ISelectStyles, IOptions } from '../../../models/login';
 
 const rotateUp = keyframes`
@@ -118,6 +126,7 @@ export type SelectProps<T extends FieldValues> = {
     options: IOptions[];
     label?: string;
     line?: number;
+    getValues?: UseFormGetValues<T>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 function Select<T extends FieldValues>({
@@ -129,6 +138,7 @@ function Select<T extends FieldValues>({
     options,
     label,
     line,
+    getValues,
 }: SelectProps<T>) {
     const [isAnimating, setIsAnimating] = React.useState<number>(0);
     const [hiddenoption, setHiddenoption] = React.useState<number>(1);
@@ -151,6 +161,13 @@ function Select<T extends FieldValues>({
         setSelectOption(e.currentTarget.getAttribute('data-option'));
         handleRotate();
     };
+
+    React.useEffect(() => {
+        if (getValues && getValues(name)) {
+            const option = options.find((item) => item.value == getValues(name));
+            setSelectOption(option ? option.option : '');
+        }
+    }, [options]);
 
     return (
         <SelectStyles hiddenoption={hiddenoption} errormessage={errormessage} line={line as number}>
