@@ -33,6 +33,7 @@ export interface ICreateOrUpdate {
 
     //nhug thuoc tinh cua contracts
     contract_name: string;
+    contract_date: string;
 }
 
 interface IContracts {

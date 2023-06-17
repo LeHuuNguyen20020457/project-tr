@@ -16,6 +16,9 @@ import EmploymentDetails from '../components/EmploymentDetails';
 
 import SalaryAndWages from '../components/SalaryAndWages';
 import Others from '../components/Others';
+import { API_URL } from '../../constrants/config';
+import { ACCESS_TOKEN } from '../../constrants/localstore';
+import axios from 'axios';
 
 const CreateOrUpdatePageStyles = styled.div`
     .title-button {
@@ -96,6 +99,7 @@ function CreateOrUpdatePage() {
     const [statusBtnFour, setStatusBtnFour] = useState<number>(1);
     const [statusBtnFive, setStatusBtnFive] = useState<number>(1);
     const [btnAdd, setBtnAdd] = useState<number>(0);
+    const [addFile, setAddFile] = React.useState<File[]>([]);
 
     const {
         control,
@@ -135,6 +139,48 @@ function CreateOrUpdatePage() {
 
     const onSubmit: SubmitHandler<ICreateOrUpdate> = (data) => {
         console.log('data, ', data);
+        axios({
+            method: 'POST',
+            baseURL: API_URL,
+            url: '/employee',
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+            },
+            data: data,
+        })
+            .then((res) => {
+                console.log('Success');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        //upload file
+        // const formData = new FormData();
+
+        // for (let i = 0; i < addFile.length; i++) {
+        //     formData.append('documents', addFile[i]);
+        // }
+
+        // axios({
+        //     method: 'GET',
+        //     baseURL: API_URL,
+        //     url: '/employee',
+        //     headers: {
+        //         Authorization: 'Bearer' + localStorage.getItem(ACCESS_TOKEN),
+        //         'Content-Type': 'multipart/form-data',
+        //     },
+        //     data: {
+        //         documents: formData,
+        //         names: [],
+        //     },
+        // })
+        //     .then((res) => {
+        //         console.log('upload success');
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
     };
 
     // console.log('watch ', getValues('benefits'));
@@ -344,6 +390,8 @@ function CreateOrUpdatePage() {
                             setValue={setValue}
                             register={register}
                             getValues={getValues}
+                            addFile={addFile}
+                            setAddFile={setAddFile}
                         ></ContractInfo>
                     </DynamicTab>
                 ) : btnCurrent === 3 ? (

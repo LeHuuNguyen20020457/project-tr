@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import { Control, FieldErrors, FieldValues, UseFormRegister, Path, UseFormGetValues } from 'react-hook-form';
-import { styled } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ICreateOrUpdate } from '../../models/createOrUpdate';
 import { Input } from '../common/input';
@@ -8,7 +8,12 @@ import { Select } from '../common/select';
 import { IOptions } from '../../models/login';
 import { Button } from '../common/button';
 
-const ContractInfoStyles = styled.div`
+interface IContractInfoStyles {
+    errorcontractdate: number;
+    errorcontractname: number;
+}
+
+const ContractInfoStyles = styled.div<IContractInfoStyles>`
     .title-span {
         height: 28px;
         height: 28px;
@@ -57,6 +62,22 @@ const ContractInfoStyles = styled.div`
                 gap: 10px;
             }
         }
+        .file-uploaded-container {
+            margin-top: 20px;
+            .name-file {
+                width: 195px;
+                height: 30px;
+                background: #f1f3f5;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+            .up-loading {
+                width: 195px;
+                height: 4px;
+                background-color: green;
+            }
+        }
 
         .table-container {
             margin-left: 70px;
@@ -65,6 +86,43 @@ const ContractInfoStyles = styled.div`
             height: 255px;
             overflow-x: hidden;
             overflow-y: hidden;
+
+            .action-container {
+                display: flex;
+                justify-content: center;
+                gap: 10;
+                .action-download {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 4px 10px;
+                    gap: 10px;
+
+                    width: 121px;
+                    height: 24px;
+
+                    background: #e9f9ee;
+                    border-radius: 6px;
+                    color: green;
+                    cursor: pointer;
+                }
+                .action-delete {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 4px 10px;
+                    gap: 4px;
+
+                    width: 84px;
+                    height: 24px;
+
+                    background: #ffefef;
+                    border-radius: 6px;
+                    color: red;
+                    cursor: pointer;
+                }
+            }
+
             thead {
                 position: sticky;
                 top: 0;
@@ -126,6 +184,27 @@ const ContractInfoStyles = styled.div`
                 text-align: center;
             }
         }
+
+        .contract-date-input {
+            ${(props) =>
+                props.errorcontractdate &&
+                css`
+                    input {
+                        border: 1px solid red;
+                        background-color: #ffefef;
+                    }
+                `};
+        }
+        .contract-name-input {
+            ${(props) =>
+                props.errorcontractname &&
+                css`
+                    input {
+                        border: 1px solid red;
+                        background-color: #ffefef;
+                    }
+                `};
+        }
     }
 `;
 
@@ -139,6 +218,8 @@ type IPersonalInfo<T extends FieldValues> = {
         config?: Partial<{ shouldValidate: boolean; shouldDirty: boolean; shouldTouch: boolean }> | undefined,
     ) => void;
     getValues: UseFormGetValues<ICreateOrUpdate>;
+    addFile: File[];
+    setAddFile: React.Dispatch<React.SetStateAction<File[]>>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const TypeOptions: IOptions[] = [
@@ -156,9 +237,57 @@ const TypeOptions: IOptions[] = [
     },
 ];
 
-function ContractInfo<T extends FieldValues>({ control, errors, setValue, register, getValues }: IPersonalInfo<T>) {
+function ContractInfo<T extends FieldValues>({
+    control,
+    errors,
+    setValue,
+    register,
+    getValues,
+    addFile,
+    setAddFile,
+}: IPersonalInfo<T>) {
+    const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+    const [errorcontractdate, seterrorcontractdate] = React.useState<number>(0);
+    const [errorcontractname, seterrorContractname] = React.useState<number>(0);
+    // const [namedate, setNamedate] = React.useState<>(0);
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setSelectedFile(event.target.files[0]);
+        }
+    };
+
+    const handleAddFile = (event: React.MouseEvent<HTMLDivElement>) => {
+        // console.log(getValues('contract_name'));
+        if (!getValues('contract_name') && !getValues('contract_date')) {
+            seterrorContractname(1);
+            seterrorcontractdate(1);
+        } else if (!getValues('contract_name')) {
+            seterrorContractname(1);
+        } else if (!getValues('contract_date')) {
+            seterrorcontractdate(1);
+        } else {
+            if (addFile?.includes(selectedFile as File)) {
+                return;
+            } else {
+                setAddFile([...addFile, selectedFile as File]);
+                seterrorContractname(0);
+                seterrorcontractdate(0);
+                setValue('contract_name', '');
+                setValue('contract_date', '');
+            }
+        }
+    };
+
+    console.log(errorcontractdate, errorcontractname);
+
+    // useEffect(() => {
+    //     const formData = new FormData();
+    //     formData.append('file', selectedFile as File);
+    //     console.log(formData);
+    // }, [selectedFile]);
+
     return (
-        <ContractInfoStyles>
+        <ContractInfoStyles errorcontractdate={errorcontractdate} errorcontractname={errorcontractname}>
             <Input
                 name={'contract_start_date' as Path<T>}
                 control={control}
@@ -188,21 +317,25 @@ function ContractInfo<T extends FieldValues>({ control, errors, setValue, regist
                 <div className="body-contract">
                     <div>
                         <div>
-                            <Input
-                                name={'contract_date' as Path<T>}
-                                control={control}
-                                label="Contract Date"
-                                line={1}
-                                width="160px"
-                                type="date"
-                            ></Input>
-                            <Input
-                                name={'contract_name' as Path<T>}
-                                control={control}
-                                label="Contract Name"
-                                line={1}
-                                width="160px"
-                            ></Input>
+                            <div className="contract-date-input">
+                                <Input
+                                    name={'contract_date' as Path<T>}
+                                    control={control}
+                                    label="Contract Date"
+                                    line={1}
+                                    width="160px"
+                                    type="date"
+                                ></Input>
+                            </div>
+                            <div className="contract-name-input">
+                                <Input
+                                    name={'contract_name' as Path<T>}
+                                    control={control}
+                                    label="Contract Name"
+                                    line={1}
+                                    width="160px"
+                                ></Input>
+                            </div>
                         </div>
                         <div>
                             <div>
@@ -226,10 +359,15 @@ function ContractInfo<T extends FieldValues>({ control, errors, setValue, regist
                                         </svg>
                                         Upload file
                                     </span>
-                                    <input type="file" hidden accept="image/*,.pdf,.csv,.xlsx,.docx" />
+                                    <input
+                                        type="file"
+                                        hidden
+                                        accept="image/*,.pdf,.csv,.xlsx,.docx"
+                                        onChange={handleFileChange}
+                                    />
                                 </label>
                             </div>
-                            <div>
+                            <div onClick={handleAddFile}>
                                 <Button
                                     title="Add"
                                     width="195px"
@@ -237,6 +375,15 @@ function ContractInfo<T extends FieldValues>({ control, errors, setValue, regist
                                     backgroundcolor="rgb(105, 217, 193)"
                                 ></Button>
                             </div>
+                            {selectedFile && (
+                                <div className="file-uploaded-container">
+                                    <div className="name-file">
+                                        <p>{selectedFile.name}</p>
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <div className="up-loading"></div>
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="table-container">
@@ -250,20 +397,28 @@ function ContractInfo<T extends FieldValues>({ control, errors, setValue, regist
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Contact Name</th>
-                                    <th>Sign Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tbody>
-                            <tbody>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Contact Name</th>
-                                    <th>Sign Date</th>
-                                    <th>Action</th>
-                                </tr>
+                                {addFile &&
+                                    addFile.map((file, index) => {
+                                        return (
+                                            <tr key={index}>
+                                                <th>No</th>
+                                                <th>Contact Name</th>
+                                                <th>Sign Date</th>
+                                                <th>
+                                                    <div className="action-container">
+                                                        <div className="action-download">
+                                                            <p>{file?.name}</p>
+                                                            <i className="fa-solid fa-download"></i>
+                                                        </div>
+                                                        <div className="action-delete">
+                                                            <p>Delete</p>
+                                                            <i className="fa-regular fa-trash-can"></i>
+                                                        </div>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        );
+                                    })}
                             </tbody>
                         </table>
                     </div>

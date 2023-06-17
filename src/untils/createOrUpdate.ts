@@ -46,6 +46,7 @@ export const schemaCreateOrUpdate = yup.object({
         .required('Please input Meal Allowance'),
     grade_id: yup.number(),
 
-    //nhung thuoc tinh cua contracts
+    //những trường của contract
+    contract_date: yup.string(),
     contract_name: yup.string(),
 });
