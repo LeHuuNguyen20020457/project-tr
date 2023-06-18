@@ -22,65 +22,6 @@ type IPersonalInfo<T extends FieldValues> = {
     getValues: UseFormGetValues<ICreateOrUpdate>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-// const DepartmentOptions: IOptions[] = [
-//     {
-//         option: 'N/A',
-//         value: 0,
-//     },
-//     {
-//         option: '456789kmnbg',
-//         value: 37,
-//     },
-//     {
-//         option: '1234546654',
-//         value: 36,
-//     },
-//     {
-//         option: 'Accounting',
-//         value: 18,
-//     },
-//     {
-//         option: 'Research and Development again',
-//         value: 14,
-//     },
-//     {
-//         option: 'QA',
-//         value: 12,
-//     },
-//     {
-//         option: 'Product Management',
-//         value: 11,
-//     },
-//     {
-//         option: 'Traning',
-//         value: 10,
-//     },
-// ];
-
-// const PositionOptions: IOptions[] = [
-//     {
-//         option: 'N/A',
-//         value: 0,
-//     },
-//     {
-//         option: 'Development',
-//         value: 7,
-//     },
-//     {
-//         option: 'Employee',
-//         value: 3,
-//     },
-//     {
-//         option: 'Manager Edit',
-//         value: 1,
-//     },
-// ];
-
-// interface IEmploymentDetails{
-//     id: number;
-//     name: string;
-// }
-
 function EmploymentDetails<T extends FieldValues>({
     control,
     errors,

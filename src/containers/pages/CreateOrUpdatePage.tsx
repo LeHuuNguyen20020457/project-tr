@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import clsx from 'clsx';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import Breadcrumb from '../common/breadcrumb/Breadcrumb';
 import { IBreadcrumbItem } from '../../models/employee';
@@ -19,6 +21,7 @@ import Others from '../components/Others';
 import { API_URL } from '../../constrants/config';
 import { ACCESS_TOKEN } from '../../constrants/localstore';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const CreateOrUpdatePageStyles = styled.div`
     .title-button {
@@ -52,6 +55,18 @@ const CreateOrUpdatePageStyles = styled.div`
         }
         .btnAddBlue {
             background: blue;
+        }
+        .btn-save-change {
+            font-weight: 400;
+            line-height: 1.71429;
+            padding: 8px 22px;
+            color: rgb(251, 253, 255);
+            background-color: rgb(0, 145, 255);
+            border-radius: 6px;
+            height: 48px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
         }
     }
     .btn-container {
@@ -88,6 +103,39 @@ const CreateOrUpdatePageStyles = styled.div`
     }
 `;
 
+const keyUpdate: (keyof ICreateOrUpdate)[] = [
+    'name',
+    'gender',
+    'mother_name',
+    'dob',
+    'pob',
+    'ktp_no',
+    'nc_id',
+    'home_address_1',
+    'home_address_2',
+    'mobile_no',
+    'tel_no',
+    'marriage_id',
+    'card_number',
+    'bank_account_no',
+    'bank_name',
+    'family_card_number',
+    'safety_insurance_no',
+    'health_insurance_no',
+    'contract_start_date',
+    'type',
+    'department_id',
+    'position_id',
+    'basic_salary',
+    'audit_salary',
+    'safety_insurance',
+    'health_insurance',
+    'meal_allowance',
+    'grade_id',
+    'benefits',
+    'remark',
+];
+
 function CreateOrUpdatePage() {
     const [btnCurrent, setBtnCurrent] = useState<number>(1);
     const [btnPrev, setBtnPrev] = useState<number | null>(null);
@@ -99,9 +147,19 @@ function CreateOrUpdatePage() {
     const [statusBtnFour, setStatusBtnFour] = useState<number>(1);
     const [statusBtnFive, setStatusBtnFive] = useState<number>(1);
     const [btnAdd, setBtnAdd] = useState<number>(0);
-
     const [addFile, setAddFile] = React.useState<File[]>([]);
     const [contractNameAndDate, setContractNameAndDate] = React.useState<IContractNameAndDate[]>([]);
+
+    const navigate = useNavigate();
+    const [isUpdate, setIsUpdate] = useState<boolean>(false);
+
+    let { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            setIsUpdate(true);
+        }
+    }, [id]);
 
     const {
         control,
@@ -110,9 +168,11 @@ function CreateOrUpdatePage() {
         register,
         setValue,
         setError,
+        reset,
         formState: { errors, touchedFields, isValid },
         getValues,
     } = useForm<ICreateOrUpdate>({
+        // shouldFocusError: false,
         resolver: yupResolver(schemaCreateOrUpdate),
         defaultValues: {
             name: '',
@@ -140,22 +200,45 @@ function CreateOrUpdatePage() {
     ];
 
     const onSubmit: SubmitHandler<ICreateOrUpdate> = (data) => {
-        console.log('data, ', data);
-        axios({
-            method: 'POST',
-            baseURL: API_URL,
-            url: '/employee',
-            headers: {
-                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
-            },
-            data: data,
-        })
-            .then((res) => {
-                console.log('Success');
+        console.log('vàoooooo');
+        console.log('data, ', isUpdate, data);
+        if (!isUpdate) {
+            axios({
+                method: 'POST',
+                baseURL: API_URL,
+                url: '/employee',
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+                },
+                data: data,
             })
-            .catch((err) => {
-                console.log(err);
-            });
+                .then((res) => {
+                    navigate('/employee');
+                    toast('Record added');
+                    console.log('Success');
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            axios({
+                method: 'PUT',
+                baseURL: API_URL,
+                url: `/employee/${id}`,
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+                },
+                data: data,
+            })
+                .then((res) => {
+                    navigate('/employee');
+                    toast('Change saved');
+                    console.log('Success');
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
 
         //upload file
 
@@ -197,6 +280,21 @@ function CreateOrUpdatePage() {
     // console.log(watch(['name', 'gender', 'dob', 'ktp_no', 'nc_id']));
     // console.log(watch(['contract_start_date', 'type']));
     // console.log(watch(['basic_salary', 'audit_salary', 'safety_insurance', 'meal_allowance']));
+
+    //UPDATE
+
+    const data = useSelector((state: any) => state.reduxglobal.employeeInfoId);
+    useEffect(() => {
+        if (data && isUpdate) {
+            keyUpdate.map((key) => {
+                setValue(key, data[key]);
+            });
+        } else {
+            keyUpdate.map((key) => {
+                reset();
+            });
+        }
+    }, [data, isUpdate]);
 
     useEffect(() => {
         //lỗi mau do nhat khi out ra
@@ -357,9 +455,15 @@ function CreateOrUpdatePage() {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="title-button">
                     <h3>Employee Management</h3>
-                    <button className={classNameBtnAdd} type="submit">
-                        Add
-                    </button>
+                    {isUpdate ? (
+                        <button className="btn-save-change" type="submit">
+                            Save change
+                        </button>
+                    ) : (
+                        <button className={classNameBtnAdd} type="submit">
+                            Add
+                        </button>
+                    )}
                 </div>
                 <div className="btn-container">
                     <button className={classNameBtnOne} type="button" onClick={handleClickBtnOne}>

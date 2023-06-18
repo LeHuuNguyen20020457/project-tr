@@ -90,8 +90,6 @@ function ContractInfo<T extends FieldValues>({
         }
     };
 
-    console.log(errorcontractdate, errorcontractname);
-
     // useEffect(() => {
     //     const formData = new FormData();
     //     formData.append('file', selectedFile as File);

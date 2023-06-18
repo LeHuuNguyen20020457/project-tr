@@ -1,10 +1,10 @@
 import React, { useEffect, ChangeEvent } from 'react';
-import { IDataEmployee, IEmployeeRedux } from '../../models/employee';
+import { useNavigate } from 'react-router-dom';
 
+import { IDataEmployee, IEmployeeRedux } from '../../models/employee';
 import { Spinner } from '../common/spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { TableStyles } from '../../style/TableStyles';
-
 import { getEmployeeId, setEmployeeId } from '../../redux/reduxglobal/globalSlice';
 
 type IPropsTable<T> = {
@@ -25,6 +25,7 @@ function Table<T extends IDataEmployee>({
     const [toggleIconCheck, setToggleIconCheck] = React.useState<number>(0);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleSelectAll = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -81,8 +82,11 @@ function Table<T extends IDataEmployee>({
         return state.employee.loading;
     });
 
+    // const data = useSelector((state: any) => state.reduxglobal.employeeInfoId);
+
     const handleUpdateEmployee = (id: number) => {
         dispatch(getEmployeeId(id));
+        navigate(`/employee/create-or-update/${id}`);
     };
 
     return (
@@ -216,7 +220,7 @@ function Table<T extends IDataEmployee>({
                                         <th>{employee.department_name}</th>
                                         <th>{employee.type}</th>
                                         <th>{employee.basic_salary}</th>
-                                        <th>{employee.position_name}</th>
+                                        <th>{employee.position_id}</th>
                                         <th>{employee.entitle_ot}</th>
                                         <th>{employee.meal_allowance_paid}</th>
                                         <th>{employee.meal_allowance}</th>

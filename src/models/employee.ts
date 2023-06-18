@@ -37,7 +37,7 @@ export interface IDataEmployee {
     department_name: string | null;
     type: string | null;
     basic_salary: number | null;
-    position_name: string | null;
+    position_id: number;
     entitle_ot: number | null;
     meal_allowance_paid: number | null;
     meal_allowance: number | null;

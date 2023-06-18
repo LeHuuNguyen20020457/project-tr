@@ -32,6 +32,7 @@ export const RouterConfig = createBrowserRouter(
             <Route path="/" element={<Root />}>
                 <Route path="/employee" element={<Employee />} />
                 <Route path="/employee/create-or-update" element={<CreateOrUpdate />} />
+                <Route path="/employee/create-or-update/:id" element={<CreateOrUpdate />} />
             </Route>
         </Route>,
     ),
