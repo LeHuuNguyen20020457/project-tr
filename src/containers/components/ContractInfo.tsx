@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect } from 'react';
 import { Control, FieldErrors, FieldValues, UseFormRegister, Path, UseFormGetValues } from 'react-hook-form';
 
-import { ICreateOrUpdate } from '../../models/createOrUpdate';
+import { IContractNameAndDate, ICreateOrUpdate } from '../../models/createOrUpdate';
 import { Input } from '../common/input';
 import { Select } from '../common/select';
 import { IOptions } from '../../models/login';
@@ -20,6 +20,8 @@ type IPersonalInfo<T extends FieldValues> = {
     getValues: UseFormGetValues<ICreateOrUpdate>;
     addFile: File[];
     setAddFile: React.Dispatch<React.SetStateAction<File[]>>;
+    contractNameAndDate: IContractNameAndDate[];
+    setContractNameAndDate: React.Dispatch<React.SetStateAction<IContractNameAndDate[]>>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const TypeOptions: IOptions[] = [
@@ -45,14 +47,17 @@ function ContractInfo<T extends FieldValues>({
     getValues,
     addFile,
     setAddFile,
+    contractNameAndDate,
+    setContractNameAndDate,
 }: IPersonalInfo<T>) {
     const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
     const [errorcontractdate, seterrorcontractdate] = React.useState<number>(0);
     const [errorcontractname, seterrorContractname] = React.useState<number>(0);
-    // const [namedate, setNamedate] = React.useState<>(0);
+
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             setSelectedFile(event.target.files[0]);
+            // setSelectedFile(event.target.files);
         }
     };
 
@@ -72,6 +77,13 @@ function ContractInfo<T extends FieldValues>({
                 setAddFile([...addFile, selectedFile as File]);
                 seterrorContractname(0);
                 seterrorcontractdate(0);
+                setContractNameAndDate([
+                    ...contractNameAndDate,
+                    {
+                        contract_name: getValues('contract_name'),
+                        contract_date: getValues('contract_date'),
+                    },
+                ]);
                 setValue('contract_name', '');
                 setValue('contract_date', '');
             }
@@ -201,9 +213,9 @@ function ContractInfo<T extends FieldValues>({
                                     addFile.map((file, index) => {
                                         return (
                                             <tr key={index}>
-                                                <th>No</th>
-                                                <th>Contact Name</th>
-                                                <th>Sign Date</th>
+                                                <th>{index + 1}</th>
+                                                <th>{contractNameAndDate[index]?.contract_name}</th>
+                                                <th>{contractNameAndDate[index]?.contract_date}</th>
                                                 <th>
                                                     <div className="action-container">
                                                         <div className="action-download">

@@ -45,3 +45,8 @@ interface IContracts {
     id?: number;
     name?: string;
 }
+
+export interface IContractNameAndDate {
+    contract_name: string;
+    contract_date: string;
+}

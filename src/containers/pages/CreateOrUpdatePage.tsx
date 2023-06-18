@@ -9,7 +9,7 @@ import { IBreadcrumbItem } from '../../models/employee';
 import DynamicTab from '../common/dynamicTab/DynamicTab';
 import PersonalInfo from '../components/PersonalInfo';
 import { schemaCreateOrUpdate } from '../../untils/createOrUpdate';
-import { ICreateOrUpdate } from '../../models/createOrUpdate';
+import { IContractNameAndDate, ICreateOrUpdate } from '../../models/createOrUpdate';
 
 import ContractInfo from '../components/ContractInfo';
 import EmploymentDetails from '../components/EmploymentDetails';
@@ -99,7 +99,9 @@ function CreateOrUpdatePage() {
     const [statusBtnFour, setStatusBtnFour] = useState<number>(1);
     const [statusBtnFive, setStatusBtnFive] = useState<number>(1);
     const [btnAdd, setBtnAdd] = useState<number>(0);
+
     const [addFile, setAddFile] = React.useState<File[]>([]);
+    const [contractNameAndDate, setContractNameAndDate] = React.useState<IContractNameAndDate[]>([]);
 
     const {
         control,
@@ -156,23 +158,31 @@ function CreateOrUpdatePage() {
             });
 
         //upload file
+
         // const formData = new FormData();
 
         // for (let i = 0; i < addFile.length; i++) {
         //     formData.append('documents', addFile[i]);
         // }
 
+        // console.log(formData);
+
+        // const names = contractNameAndDate.map((contract) => contract.contract_name);
+        // const contract_dates = contractNameAndDate.map((contract) => contract.contract_date);
+
         // axios({
-        //     method: 'GET',
+        //     method: 'POST',
         //     baseURL: API_URL,
-        //     url: '/employee',
+        //     url: '/contract/save-multiple',
         //     headers: {
         //         Authorization: 'Bearer' + localStorage.getItem(ACCESS_TOKEN),
         //         'Content-Type': 'multipart/form-data',
         //     },
         //     data: {
-        //         documents: formData,
-        //         names: [],
+        //         employee_id: 5000,
+        //         documents: addFile,
+        //         names: names,
+        //         contract_dates: contract_dates,
         //     },
         // })
         //     .then((res) => {
@@ -392,6 +402,8 @@ function CreateOrUpdatePage() {
                             getValues={getValues}
                             addFile={addFile}
                             setAddFile={setAddFile}
+                            contractNameAndDate={contractNameAndDate}
+                            setContractNameAndDate={setContractNameAndDate}
                         ></ContractInfo>
                     </DynamicTab>
                 ) : btnCurrent === 3 ? (

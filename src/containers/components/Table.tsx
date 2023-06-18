@@ -4,6 +4,9 @@ import { IDataEmployee, IEmployeeRedux } from '../../models/employee';
 import { Spinner } from '../common/spinner';
 import { useSelector } from 'react-redux';
 import { TableStyles } from '../../style/TableStyles';
+import { API_URL } from '../../constrants/config';
+import { ACCESS_TOKEN } from '../../constrants/localstore';
+import axios from 'axios';
 
 type IPropsTable<T> = {
     EmployeeList: T[];
@@ -76,6 +79,23 @@ function Table<T extends IDataEmployee>({
     const isLoading = useSelector((state: IEmployeeRedux): boolean => {
         return state.employee.loading;
     });
+
+    const handleUpdateEmployee = (id: number) => {
+        axios({
+            method: 'GET',
+            baseURL: API_URL,
+            url: `/employee/${id}`,
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+            },
+        })
+            .then((res) => {
+                console.log('Success', res);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     return (
         <TableStyles>
@@ -162,7 +182,7 @@ function Table<T extends IDataEmployee>({
                         {EmployeeList &&
                             EmployeeList?.map((employee: T, index: number): React.ReactNode => {
                                 return (
-                                    <tr key={index}>
+                                    <tr key={index} onDoubleClick={() => handleUpdateEmployee(employee.id)}>
                                         <th>
                                             <span>
                                                 {!checkedList.includes(employee.id) ? (
