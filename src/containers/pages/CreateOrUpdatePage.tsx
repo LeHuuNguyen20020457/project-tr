@@ -193,11 +193,17 @@ function CreateOrUpdatePage() {
         mode: 'onChange',
     });
 
-    const breadcrumbItems: IBreadcrumbItem[] = [
-        { label: 'General' },
-        { label: 'Employee Management', link: '/employee' },
-        { label: 'Add new employee', active: true },
-    ];
+    const breadcrumbItems: IBreadcrumbItem[] = isUpdate
+        ? [
+              { label: 'General' },
+              { label: 'Employee Management', link: '/employee' },
+              { label: 'Edit employee', active: true },
+          ]
+        : [
+              { label: 'General' },
+              { label: 'Employee Management', link: '/employee' },
+              { label: 'Add new employee', active: true },
+          ];
 
     const onSubmit: SubmitHandler<ICreateOrUpdate> = (data) => {
         console.log('vàoooooo');

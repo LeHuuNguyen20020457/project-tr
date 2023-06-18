@@ -16,6 +16,7 @@ import { Input } from '../common/input';
 import axios from 'axios';
 import { API_URL } from '../../constrants/config';
 import { ACCESS_TOKEN } from '../../constrants/localstore';
+import { Spinner } from '../common/spinner';
 
 const NavLinkStyles = styled.div`
     color: blue;
@@ -25,6 +26,17 @@ const NavLinkStyles = styled.div`
     justify-content: center;
     margin-top: 24px;
     margin-bottom: 24px;
+`;
+
+const SubmitingStyledBtn = styled.div`
+    background-color: #c1c8cd;
+    color: #fff;
+    border: none;
+    width: 276px;
+    height: 48px;
+    border-radius: 6px;
+    margin-top: 26px;
+    cursor: pointer;
 `;
 
 const factoryList: IOptions[] = [
@@ -46,7 +58,7 @@ function LoginForm(): JSX.Element {
         register,
         setValue,
         setError,
-        formState: { errors, touchedFields },
+        formState: { errors, touchedFields, isSubmitting },
     } = useForm<ILoginForm>({
         resolver: yupResolver(schema),
         defaultValues: {
@@ -102,7 +114,13 @@ function LoginForm(): JSX.Element {
                     options={factoryList}
                     label="Factory"
                 ></Select>
-                <Button title="Sign In" width="276px" type="submit"></Button>
+                {!isSubmitting ? (
+                    <Button title="Sign In" width="276px" type="submit"></Button>
+                ) : (
+                    <SubmitingStyledBtn>
+                        <Spinner></Spinner>
+                    </SubmitingStyledBtn>
+                )}
             </form>
             <NavLinkStyles>
                 <NavLink to={'/auth/forgot-password'}>Forgot Your Password</NavLink>

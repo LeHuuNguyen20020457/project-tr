@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -48,6 +49,8 @@ function ListEmployee() {
         dispatch(setLoading(true));
         dispatch(deleteMultipleEmployees([checkedList]));
         setShowDialog(false);
+        setCheckedList([]);
+        toast.info('success', { autoClose: 1000 });
     }, [checkedList]);
     return (
         <ListEmployeeStyles disabled={disabled}>

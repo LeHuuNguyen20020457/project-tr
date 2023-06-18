@@ -65,13 +65,62 @@ function EmployeePage() {
         }
     }, [count.current]);
 
+    function levenshteinDistance(word1: string, word2: string): number {
+        const m = word1.length;
+        const n = word2.length;
+
+        // Tạo một ma trận có kích thước (m+1) x (n+1) và khởi tạo giá trị ban đầu
+        const dp: number[][] = [];
+        for (let i = 0; i <= m; i++) {
+            dp[i] = [];
+            dp[i][0] = i;
+        }
+        for (let j = 0; j <= n; j++) {
+            dp[0][j] = j;
+        }
+
+        // Tính toán khoảng cách Levenshtein
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                const cost = word1[i - 1] === word2[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1, // Xóa
+                    dp[i][j - 1] + 1, // Chèn
+                    dp[i - 1][j - 1] + cost, // Thay thế
+                );
+            }
+        }
+
+        return dp[m][n];
+    }
+
+    function searchClosestWords(word: string, wordArray: string[]): string[] {
+        let minDistance = Infinity;
+        const closestWords: string[] = [];
+
+        for (let i = 0; i < wordArray.length; i++) {
+            const currentWord = wordArray[i];
+            const distance = levenshteinDistance(word, currentWord);
+
+            if (distance < minDistance) {
+                closestWords.length = 0; // Xóa mảng closestWords
+                minDistance = distance;
+                closestWords.push(currentWord);
+            } else if (distance === minDistance) {
+                closestWords.push(currentWord);
+            }
+        }
+
+        return closestWords;
+    }
+
     const handleSearchEmployee = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value) {
             const nameArr: string[] = [];
             for (let i = 0; i < EmployeeListCopy.current.length; i++) {
                 nameArr.push(EmployeeListCopy.current[i].name);
             }
-            const nameSearch = matchSorter(nameArr, e.target.value);
+            const nameSearch = searchClosestWords(e.target.value, nameArr);
             const employeeArr = EmployeeListCopy.current.filter((item) => nameSearch.includes(item.name));
             dispatch(setEmpoloyeeList(employeeArr));
         } else {
