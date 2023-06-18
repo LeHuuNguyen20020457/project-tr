@@ -37,37 +37,6 @@ const genderList: IOptions[] = [
     },
 ];
 
-// const marriageStatus: IOptions[] = [
-//     {
-//         option: 'N/A',
-//         value: 0,
-//     },
-//     {
-//         option: 'Not Married',
-//         value: 7,
-//     },
-//     {
-//         option: 'Married with 3 kids',
-//         value: 5,
-//     },
-//     {
-//         option: 'Married with 2 kids',
-//         value: 4,
-//     },
-//     {
-//         option: 'Married with 1 kids',
-//         value: 3,
-//     },
-//     {
-//         option: 'Married',
-//         value: 2,
-//     },
-//     {
-//         option: 'Single',
-//         value: 1,
-//     },
-// ];
-
 function PersonalInfo<T extends FieldValues>({ control, errors, setValue, register, getValues }: IPersonalInfo<T>) {
     const [marriageStatus, setMarriageStatus] = React.useState<IOptions[]>([]);
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Control, FieldErrors, FieldValues, UseFormRegister, Path, UseFormGetValues } from 'react-hook-form';
-import { styled } from 'styled-components';
 
 import { ICreateOrUpdate } from '../../models/createOrUpdate';
 import { Input } from '../common/input';
@@ -9,35 +8,7 @@ import { IOptions } from '../../models/login';
 import axios from 'axios';
 import { API_URL } from '../../constrants/config';
 import { ACCESS_TOKEN } from '../../constrants/localstore';
-
-const EmploymentDetailsStyles = styled.div`
-    display: grid;
-    gap: 10px;
-    .input-checkbox {
-        display: flex;
-        width: 300px;
-        justify-content: left;
-        align-items: center;
-        gap: 10px;
-        .input-checkbox-1 {
-            padding: 0px;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #dfe3e6;
-            border-radius: 4px;
-            accent-color: #30a46c;
-        }
-        .input-checkbox-2 {
-            padding: 0px;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #dfe3e6;
-            border-radius: 4px;
-
-            accent-color: rgba(193, 200, 205, 0.8);
-        }
-    }
-`;
+import { EmploymentDetailsStyles } from '../../style/EmploymentDetailsStyles';
 
 type IPersonalInfo<T extends FieldValues> = {
     control: Control<T>;
