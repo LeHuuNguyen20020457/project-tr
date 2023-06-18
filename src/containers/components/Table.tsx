@@ -2,11 +2,10 @@ import React, { useEffect, ChangeEvent } from 'react';
 import { IDataEmployee, IEmployeeRedux } from '../../models/employee';
 
 import { Spinner } from '../common/spinner';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TableStyles } from '../../style/TableStyles';
-import { API_URL } from '../../constrants/config';
-import { ACCESS_TOKEN } from '../../constrants/localstore';
-import axios from 'axios';
+
+import { getEmployeeId, setEmployeeId } from '../../redux/reduxglobal/globalSlice';
 
 type IPropsTable<T> = {
     EmployeeList: T[];
@@ -24,6 +23,8 @@ function Table<T extends IDataEmployee>({
     setCheckedList,
 }: IPropsTable<T> & { children?: React.ReactNode }): React.ReactElement {
     const [toggleIconCheck, setToggleIconCheck] = React.useState<number>(0);
+
+    const dispatch = useDispatch();
 
     const handleSelectAll = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -81,20 +82,7 @@ function Table<T extends IDataEmployee>({
     });
 
     const handleUpdateEmployee = (id: number) => {
-        axios({
-            method: 'GET',
-            baseURL: API_URL,
-            url: `/employee/${id}`,
-            headers: {
-                Authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
-            },
-        })
-            .then((res) => {
-                console.log('Success', res);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        dispatch(getEmployeeId(id));
     };
 
     return (

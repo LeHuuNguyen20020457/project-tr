@@ -3,7 +3,7 @@ import logger from 'redux-logger';
 import createSagaMiddeware from '@redux-saga/core';
 
 import { reducer } from './reducers';
-import rootSaga from './rootSaga';
+import { rootSagaAll } from './rootSagaAll';
 
 const sagaMiddleware = createSagaMiddeware();
 
@@ -12,5 +12,6 @@ const store = configureStore({
     middleware: (gDM) => gDM().concat(logger, sagaMiddleware),
 });
 
-sagaMiddleware.run(rootSaga);
+sagaMiddleware.run(rootSagaAll);
+
 export default store;

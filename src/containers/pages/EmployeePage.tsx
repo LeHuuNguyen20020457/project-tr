@@ -58,7 +58,6 @@ function EmployeePage() {
 
     React.useMemo(() => {
         if (EmployeeList && count.current === 1) {
-            console.log(count.current);
             count.current = count.current + 1;
             EmployeeListCopy.current = EmployeeList;
         } else {
