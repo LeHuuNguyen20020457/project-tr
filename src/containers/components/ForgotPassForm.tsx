@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import styled from 'styled-components';
+import nodemailer from 'nodemailer';
 
 import { FormContainer } from '../common/formContainer';
 import { Input } from '../common/input';
@@ -37,8 +38,36 @@ function ForgotPasswordForm() {
     });
 
     const onSubmit: SubmitHandler<IForgotPass> = (data) => {
-        console.log(data);
+        // Gọi hàm để gửi email
+        // sendEmail(data.email);
     };
+
+    // const sendEmail = async (email: string) => {
+    //     try {
+    //         // Tạo transporter
+    //         const transporter = nodemailer.createTransport({
+    //             service: 'gmail',
+    //             auth: {
+    //                 user: 'nguyenlhc2ts42020@gmail.com',
+    //                 pass: 'le9876543',
+    //             },
+    //         });
+
+    //         // Tạo nội dung email
+    //         const mailOptions = {
+    //             from: 'nguyenlhc2ts42020@gmail.com',
+    //             to: `${email}`,
+    //             subject: 'OTP Verification',
+    //             text: 'Your OTP code is 123456', // Thay đổi OTP code tùy thuộc vào mã bạn muốn gửi
+    //         };
+
+    //         // Gửi email
+    //         const result = await transporter.sendMail(mailOptions);
+    //         console.log('Email sent:', result.response);
+    //     } catch (error) {
+    //         console.error('Error sending email:', error);
+    //     }
+    // };
 
     return (
         <FormContainer>

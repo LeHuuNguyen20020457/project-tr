@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Control, FieldErrors, FieldValues, UseFormRegister, Path, UseFormGetValues } from 'react-hook-form';
 
 import { ICreateOrUpdate } from '../../models/createOrUpdate';
@@ -31,6 +31,37 @@ function EmploymentDetails<T extends FieldValues>({
 }: IPersonalInfo<T>) {
     const [DepartmentOptions, setDepartmentOptions] = React.useState<IOptions[]>([]);
     const [PositionOptions, setPositionOptions] = React.useState<IOptions[]>([]);
+
+    const [checkEntitledOT, setCheckEntitledOT] = React.useState<boolean>(getValues('entitle_ot') ? true : false);
+    const [checkMAP, setCheckMAP] = React.useState<boolean>(getValues('meal_allowance_paid') ? true : false);
+
+    const handleChangeEntitledOT = () => {
+        setCheckEntitledOT(!checkEntitledOT);
+    };
+
+    const handleChangeMAP = () => {
+        setCheckMAP(!checkMAP);
+    };
+
+    useEffect(() => {
+        if (checkEntitledOT) {
+            setValue('entitle_ot', 'yes');
+            setValue('operational_allowance_paid', '');
+            setValue('attendance_allowance_paid', '');
+        } else {
+            setValue('entitle_ot', '');
+            setValue('operational_allowance_paid', 'yes');
+            setValue('attendance_allowance_paid', 'yes');
+        }
+    }, [checkEntitledOT]);
+
+    useEffect(() => {
+        if (checkMAP) {
+            setValue('meal_allowance_paid', 'yes');
+        } else {
+            setValue('meal_allowance_paid', '');
+        }
+    }, [checkMAP]);
 
     React.useEffect(() => {
         axios({
@@ -97,21 +128,45 @@ function EmploymentDetails<T extends FieldValues>({
                 options={PositionOptions}
                 getValues={getValues}
             ></Select>
-            <EmploymentDetailsStyles>
+            <EmploymentDetailsStyles checkentitledot={checkEntitledOT ? 1 : 0}>
                 <div className="input-checkbox">
-                    <input type="checkbox" className="input-checkbox-1" />
+                    <input
+                        type="checkbox"
+                        className="input-checkbox-1"
+                        checked={checkEntitledOT}
+                        {...register('entitle_ot')}
+                        onChange={handleChangeEntitledOT}
+                    />
                     <span>Entitled OT</span>
                 </div>
                 <div className="input-checkbox">
-                    <input type="checkbox" className="input-checkbox-1" />
+                    <input
+                        type="checkbox"
+                        className="input-checkbox-1"
+                        {...register('meal_allowance_paid')}
+                        checked={checkMAP}
+                        onChange={handleChangeMAP}
+                    />
                     <span>Meal Allowance Paid</span>
                 </div>
                 <div className="input-checkbox">
-                    <input type="checkbox" className="input-checkbox-2" />
+                    <input
+                        type="checkbox"
+                        className="input-checkbox-2"
+                        checked={!checkEntitledOT}
+                        {...register('operational_allowance_paid')}
+                        onChange={() => {}}
+                    />
                     <span>Operational Allowance Paid</span>
                 </div>
                 <div className="input-checkbox">
-                    <input type="checkbox" className="input-checkbox-2" />
+                    <input
+                        type="checkbox"
+                        className="input-checkbox-2"
+                        checked={!checkEntitledOT}
+                        {...register('attendance_allowance_paid')}
+                        onChange={() => {}}
+                    />
                     <span>Attendance Allowance Paid</span>
                 </div>
             </EmploymentDetailsStyles>

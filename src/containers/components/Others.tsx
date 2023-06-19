@@ -176,6 +176,23 @@ function Others<T extends FieldValues>({ register, setValue, getValues }: ISelec
         }
     }, []);
 
+    //kiểm tra mảng benefitArr có phải chứa các object hay không
+    function isArrayContainsObjects(arr: any[]) {
+        setBenefitArr([...arr.map((item) => item.id)]);
+        setValue('benefits', [...arr.map((item) => item.id)]);
+    }
+
+    useEffect(() => {
+        if (
+            Array.isArray(getValues('benefits' as Path<T>)) &&
+            getValues('benefits' as Path<T>).every((item: IBenefitOption) => typeof item === 'object')
+        ) {
+            isArrayContainsObjects(getValues('benefits' as Path<T>));
+        }
+    }, []);
+
+    console.log(benefitArr);
+
     //upload-file
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files && event.target.files[0];

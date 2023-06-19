@@ -30,6 +30,10 @@ export interface ICreateOrUpdate {
     grade_id: number;
     benefits: number[]; // không validate
     remark: string; // không validate
+    entitle_ot: string;
+    meal_allowance_paid: string;
+    operational_allowance_paid: string;
+    attendance_allowance_paid: string;
 
     //nhug thuoc tinh cua contracts
     contract_name: string;

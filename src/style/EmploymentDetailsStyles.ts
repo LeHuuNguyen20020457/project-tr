@@ -1,5 +1,8 @@
-import { styled } from 'styled-components';
-export const EmploymentDetailsStyles = styled.div`
+import { styled, css } from 'styled-components';
+interface IChecked {
+    checkentitledot: number;
+}
+export const EmploymentDetailsStyles = styled.div<IChecked>`
     display: grid;
     gap: 10px;
     .input-checkbox {
@@ -22,8 +25,16 @@ export const EmploymentDetailsStyles = styled.div`
             height: 20px;
             border: 1px solid #dfe3e6;
             border-radius: 4px;
-
             accent-color: rgba(193, 200, 205, 0.8);
+            ${(props) =>
+                props.checkentitledot
+                    ? css`
+                          appearance: none;
+                          -webkit-appearance: none;
+                          -moz-appearance: none;
+                          background-color: #f1f3f5 !important;
+                      `
+                    : ''};
         }
     }
 `;
